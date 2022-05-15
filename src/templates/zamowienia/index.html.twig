@@ -1,0 +1,102 @@
+{% extends "/layouts/admin.html.twig" %} {% block content %}
+
+<div class="container">
+  {% if sessionGet("error__index") %}
+  <div class="alert alert-danger alert-dismissible fade show mb-5" role="alert">
+    <strong>Uwaga!</strong> {{ sessionShow("error__index") }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+
+  <div class="d-flex justify-content-between align-items-end mb-5 pb-2">
+    <h1>Zamówienia</h1>
+    <div class="d-flex align-items-end">
+      <div class="">
+        <a class="btn btn-success" href="{{ route("zamowienia.create") }}"
+          >Dodaj nowy zamówienie</a
+        >
+      </div>
+      {# <form method="GET">
+        <div class="d-flex align-items-end">
+          <div class="me-2" role="group" aria-label="Third group">
+            <label class="form-label">Wyszukiwanie:</label>
+            <input
+              name="search"
+              class="form-control"
+              type="search"
+              placeholder="Szukaj"
+              value="{{ urlParam("search") }}"
+            />
+          </div>
+          <div class="btn-group" role="group" aria-label="Third group">
+            <button class="btn btn-primary" type="submit">Zastosuj</button>
+          </div>
+        </div>
+      </form> #}
+    </div>
+  </div>
+
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col" style="width: 5%">#</th>
+        <th scope="col" style="width: 30%">Użytkownik</th>
+        <th scope="col" style="width: 15%">Forma Płatności</th>
+        <th scope="col" style="width: 10%">Kwota</th>
+        <th scope="col" style="width: 15%">Status Zamówienia</th>
+        <th scope="col" style="width: 15%">Data Zamówienia</th>
+        <th scope="col" style="width: 10%">Akcje</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for zamowienie in zamowienia %}
+      <tr>
+        <th class="align-middle" scope="row">{{ zamowienie.id_zamowienia }}</th>
+        <td class="align-middle">{{ zamowienie.email }}</td>
+        <td class="align-middle">{{ zamowienie.forma_platnosci|capitalize }}</td>
+        <td class="align-middle">{{ zamowienie.kwota }} zł</td>
+        <td class="align-middle">{{ zamowienie.status_zamowienia|lower|capitalize }}</td>
+        <td class="align-middle">{{ zamowienie.data_zamowienia|date("m/d/Y")}}</td>
+        <td class="align-middle">
+          <div class="d-flex align-items-center">
+
+              <a class="table-button table-button--edit" href="{{ route('zamowienia.edit', zamowienie.id_zamowienia) }}">
+                  <i data-feather="edit"></i>
+              </a>
+              <form method="POST" action="{{ route('zamowienia.destroy', zamowienie.id_zamowienia) }}">
+                  <button class="table-button table-button--delete" type="submit">
+                      <i data-feather="x-circle"></i>
+                  </button>
+              </form>
+          </div>
+      </td>
+      </tr>
+      {% else %}
+      <tr>
+        <th scope="row" colspan="6">Brak ofert.</th>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="d-flex justify-content-center mt-5">
+    <nav>
+      <ul class="pagination pagination-sm">
+        {% for key, value in pagination.links %}
+
+        <li
+          class="page-item {% if key + 1 == pagination.currentPage %}active{% endif %}"
+          aria-current="page"
+        >
+          <a href="{{ value }}"
+            ><span class="page-link">{{ key + 1 }}</span></a
+          >
+        </li>
+
+        {% endfor %}
+      </ul>
+    </nav>
+  </div>
+</div>
+
+{% endblock %}

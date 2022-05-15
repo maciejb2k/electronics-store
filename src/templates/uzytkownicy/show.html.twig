@@ -1,0 +1,149 @@
+{% extends "/layouts/admin.html.twig" %} {% block content %}
+
+<div class="container">
+  <div class="row mb-5">
+    <h1>Użytkownik #{{ uzytkownik.id }}</h1>
+    <a class="" href="{{ route('uzytkownicy.index') }}"
+      >Powrót do wszystkich użytkowników</a
+    >
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      {% if uzytkownik %}
+      <ol class="list-group mb-4">
+        <li
+          class="list-group-item d-flex justify-content-between align-items-start"
+        >
+          <div class="ms-2 me-auto">
+            <div class="fw-bold">{{ uzytkownik.imie }}</div>
+            Imię
+          </div>
+        </li>
+        <li
+          class="list-group-item d-flex justify-content-between align-items-start"
+        >
+          <div class="ms-2 me-auto">
+            <div class="fw-bold">{{ uzytkownik.nazwisko }}</div>
+            Nazwisko
+          </div>
+        </li>
+        <li
+          class="list-group-item d-flex justify-content-between align-items-start"
+        >
+          <div class="ms-2 me-auto">
+            <div class="fw-bold">{{ uzytkownik.nazwa_uzytkownika }}</div>
+            Nazwa Użytkownika
+          </div>
+        </li>
+        <li
+          class="list-group-item d-flex justify-content-between align-items-start"
+        >
+          <div class="ms-2 me-auto">
+            <div class="fw-bold">{{ uzytkownik.email }}</div>
+            E-Mail
+          </div>
+        </li>
+        <li
+          class="list-group-item d-flex justify-content-between align-items-start"
+        >
+          <div class="ms-2 me-auto">
+            <div class="fw-bold">+48{{ uzytkownik.telefon }}</div>
+            Telefon
+          </div>
+        </li>
+        <li
+          class="list-group-item d-flex justify-content-between align-items-start"
+        >
+          <div class="ms-2 me-auto">
+            <div class="fw-bold">{{ uzytkownik.haslo }}</div>
+            Hasło
+          </div>
+        </li>
+      </ol>
+    
+      <ol class="list-group mb-4">
+        <li
+          class="list-group-item d-flex justify-content-between align-items-start"
+        >
+          <div class="ms-2 me-auto">
+            <div class="fw-bold">{{ uzytkownik.ulica }}</div>
+            Ulica
+          </div>
+        </li>
+        <li
+          class="list-group-item d-flex justify-content-between align-items-start"
+        >
+          <div class="ms-2 me-auto">
+            <div class="fw-bold">{{ uzytkownik.nr_mieszkania }}</div>
+            Numer Mieszkania
+          </div>
+        </li>
+        <li
+          class="list-group-item d-flex justify-content-between align-items-start"
+        >
+          <div class="ms-2 me-auto">
+            <div class="fw-bold">{{ uzytkownik.miasto }}</div>
+            Miasto
+          </div>
+        </li>
+        <li
+          class="list-group-item d-flex justify-content-between align-items-start"
+        >
+          <div class="ms-2 me-auto">
+            <div class="fw-bold">{{ uzytkownik.kod_pocztowy }}</div>
+            Kod Pocztowy
+          </div>
+        </li>
+        <li
+          class="list-group-item d-flex justify-content-between align-items-start"
+        >
+          <div class="ms-2 me-auto">
+            <div class="fw-bold">{{ uzytkownik.kraj }}</div>
+            Kraj
+          </div>
+        </li>
+      </ol>
+      <a href="{{ route("uzytkownicy.edit", uzytkownik.id) }}" class="btn btn-primary
+      form-submit" type="submit">Edytuj Użytkownika</a>
+    </div>
+    <div class="col-md-8">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col" style="width: 10%">#</th>
+            <th scope="col" style="width: 20%">Forma Płatności</th>
+            <th scope="col" style="width: 20%">Kwota</th>
+            <th scope="col" style="width: 25%">Status Zamówienia</th>
+            <th scope="col" style="width: 15%">Data</th>
+            <th scope="col" style="width: 10%">Akcje</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for zamowienie in zamowienia %}
+          <tr>
+            <th class="align-middle" scope="row">{{ zamowienie.id }}</th>
+            <td class="align-middle">{{ zamowienie.forma_platnosci|capitalize }}</td>
+            <td class="align-middle">{{ zamowienie.kwota }} zł</td>
+            <td class="align-middle">{{ zamowienie.status_zamowienia|lower|capitalize }}</td>
+            <td class="align-middle">{{ zamowienie.data_zamowienia|date("m/d/Y")}}</td>
+            <td class="align-middle">
+              <div class="d-flex align-items-center">
+                <a class="table-button table-button--show" href="{{ route('zamowienia.edit', zamowienie.id) }}">
+                  <i data-feather="arrow-right-circle"></i>
+              </a>
+              </div>
+          </td>
+          </tr>
+          {% else %}
+          <tr>
+            <th scope="row" colspan="6">Brak zamówień.</th>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+{% else %} Nie istnieje taki użytkownik. {% endif %} {% endblock %}

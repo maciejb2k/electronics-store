@@ -1,0 +1,104 @@
+{% extends "/layouts/admin.html.twig" %} {% block content %}
+
+<div class="container">
+  {% if sessionGet("error__index") %}
+  <div class="alert alert-danger alert-dismissible fade show mb-5" role="alert">
+    <strong>Uwaga!</strong> {{ sessionShow("error__index") }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+
+  <div class="d-flex justify-content-between align-items-end mb-5 pb-2">
+    <h1>Produkty</h1>
+    <div class="d-flex align-items-end">
+      <div class="me-4">
+        <a class="btn btn-success" href="{{ route("produkty.create") }}"
+          >Dodaj nowy produkt</a
+        >
+      </div>
+      <form method="GET">
+        <div class="d-flex align-items-end">
+          <div class="me-2" role="group" aria-label="Third group">
+            <label class="form-label">Wyszukiwanie:</label>
+            <input
+              name="search"
+              class="form-control"
+              type="search"
+              placeholder="Szukaj"
+              value="{{ urlParam("search") }}"
+            />
+          </div>
+          <div class="btn-group" role="group" aria-label="Third group">
+            <button class="btn btn-primary" type="submit">Zastosuj</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col" style="width: 10%">#</th>
+        <th scope="col" style="width: 10%">Nazwa</th>
+        <th scope="col" style="width: 15%">Kod Producenta</th>
+        <th scope="col" style="width: 15%">Cena</th>
+        <th scope="col" style="width: 20%">Opis</th>
+        <th scope="col" style="width: 10%">Kategoria</th>
+        <th scope="col" style="width: 10%">Akcje</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for produkt in produkty %}
+      <tr>
+        <th class="align-middle" scope="row">{{ produkt.id }}</th>
+        <td class="align-middle">{{ produkt.nazwa }}</td>
+        <td class="align-middle">{{ produkt.kod_producenta }}</td>
+        <td class="align-middle">{{ produkt.cena }} zł</td>
+        <td class="align-middle">{{ produkt.opis }}</td>
+        <td class="align-middle">{{ produkt.kategoria }}</td>
+        <td class="align-middle">
+          <div class="d-flex align-items-center">
+              <a class="table-button table-button--show" href="{{ route('produkty.show', produkt.id) }}">
+                  <i data-feather="arrow-right-circle"></i>
+              </a>
+              <a class="table-button table-button--edit" href="{{ route('produkty.edit', produkt.id) }}">
+                  <i data-feather="edit"></i>
+              </a>
+              <form method="POST" action="{{ route('produkty.destroy', produkt.id) }}">
+                  <button class="table-button table-button--delete" type="submit">
+                      <i data-feather="x-circle"></i>
+                  </button>
+              </form>
+          </div>
+      </td>
+      </tr>
+      {% else %}
+      <tr>
+        <th scope="row" colspan="6">Brak ofert.</th>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="d-flex justify-content-center mt-5">
+    <nav>
+      <ul class="pagination pagination-sm">
+        {% for key, value in pagination.links %}
+
+        <li
+          class="page-item {% if key + 1 == pagination.currentPage %}active{% endif %}"
+          aria-current="page"
+        >
+          <a href="{{ value }}"
+            ><span class="page-link">{{ key + 1 }}</span></a
+          >
+        </li>
+
+        {% endfor %}
+      </ul>
+    </nav>
+  </div>
+</div>
+
+{% endblock %}

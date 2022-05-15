@@ -1,0 +1,85 @@
+{% extends "/layouts/admin.html.twig" %} {% block content %}
+
+<div class="container admin-form">
+  <div class="row mb-4">
+    <h1>Edytuj Adres #{{ data.id }}</h1>
+    <a class="" href="{{ route("adresy.index") }}"
+      >Powrót do wszystkich adresów</a
+    >
+  </div>
+
+  {% if sessionGet("success__edit") %}
+  <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+    {{ sessionShow("success__edit") }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+  {% if sessionGet("error__edit") %}
+  <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+      {{ sessionShow("error__edit") }}
+    </div>
+  {% endif %}
+
+  <form method="POST">
+    <div class="form-group mb-3">
+      <div class="mb-3">
+        <label for="ulica" class="form-label">Ulica</label>
+        <input
+          value="{{data.ulica}}"
+          id="ulica"
+          name="ulica"
+          type="text"
+          class="form-control"
+        />
+        <div class="invalid-feedback">Nieprawidłowe dane!</div>
+      </div>
+      <div class="mb-3">
+        <label for="nr_mieszkania" class="form-label">Numer Mieszkania</label>
+        <input
+          value="{{data.nr_mieszkania}}"
+          id="nr_mieszkania"
+          name="nr_mieszkania"
+          type="text"
+          class="form-control"
+        />
+        <div class="invalid-feedback">Nieprawidłowe dane!</div>
+      </div>
+      <div class="mb-3">
+        <label for="miasto" class="form-label">Miasto</label>
+        <input
+          id="miasto"
+          value="{{data.miasto}}"
+          name="miasto"
+          type="text"
+          class="form-control"
+        />
+        <div class="invalid-feedback">Nieprawidłowe dane!</div>
+      </div>
+      <div class="mb-3">
+        <label for="kod_pocztowy" class="form-label">Kod Pocztowy</label>
+        <input
+          id="kod_pocztowy"
+          value="{{data.kod_pocztowy}}"
+          name="kod_pocztowy"
+          type="text"
+          class="form-control"
+        />
+        <div class="invalid-feedback">Nieprawidłowe dane!</div>
+      </div>
+      <div class="mb-3">
+        <label for="kraj" class="form-label">Kraj</label>
+        <input
+          value="{{data.kraj}}"
+          id="kraj"
+          name="kraj"
+          type="text"
+          class="form-control"
+        />
+        <div class="invalid-feedback">Nieprawidłowe dane!</div>
+      </div>
+      <input class="btn btn-primary" type="submit" value="Edytuj" />
+    </div>
+  </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "/layouts/admin.html.twig" %} {% block content %}
+
+<div class="admin-show-list">
+  {% if data %}
+
+  <div class="row mb-5">
+    <h1>Produkt #{{ data.id }}</h1>
+    <a class="" href="{{ route('produkty.index') }}"
+      >Powrót do wszystkich produktów</a
+    >
+  </div>
+
+  <ol class="list-group mb-4">
+    <li
+      class="list-group-item d-flex justify-content-between align-items-start"
+    >
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">{{ data.nazwa }}</div>
+        Nazwa
+      </div>
+    </li>
+    <li
+      class="list-group-item d-flex justify-content-between align-items-start"
+    >
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">{{ data.kod_producenta }}</div>
+        Kod Producenta
+      </div>
+    </li>
+    <li
+      class="list-group-item d-flex justify-content-between align-items-start"
+    >
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">{{ data.cena }} zł</div>
+        Cena
+      </div>
+    </li>
+    <li
+      class="list-group-item d-flex justify-content-between align-items-start"
+    >
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">{{ data.opis }}</div>
+        Opis
+      </div>
+    </li>
+    <li
+      class="list-group-item d-flex justify-content-between align-items-start"
+    >
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">{{ data.kategoria }}</div>
+        Kategoria
+      </div>
+    </li>
+  </ol>
+  <a href="{{ route("produkty.edit", data.id) }}" class="btn btn-primary
+  form-submit" type="submit">Edytuj Produkt</a>
+</div>
+
+{% else %} Nie istnieje taki adres. {% endif %} {% endblock %}

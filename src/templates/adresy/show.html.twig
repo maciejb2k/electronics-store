@@ -1,0 +1,57 @@
+{% extends "/layouts/admin.html.twig" %} {% block content %}
+
+<div class="admin-show-list">
+  {% if data %}
+
+  <div class="row mb-5">
+    <h1>Adres #{{ data.id }}</h1>
+    <a class="" href="{{ route('adresy.index') }}"
+      >Powrót do wszystkich adresów</a
+    >
+  </div>
+
+  <ol class="list-group">
+    <li
+      class="list-group-item d-flex justify-content-between align-items-start"
+    >
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">{{ data.ulica }}</div>
+        Ulica
+      </div>
+    </li>
+    <li
+      class="list-group-item d-flex justify-content-between align-items-start"
+    >
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">{{ data.nr_mieszkania }}</div>
+        Numer Mieszkania
+      </div>
+    </li>
+    <li
+      class="list-group-item d-flex justify-content-between align-items-start"
+    >
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">{{ data.miasto }}</div>
+        Miasto
+      </div>
+    </li>
+    <li
+      class="list-group-item d-flex justify-content-between align-items-start"
+    >
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">{{ data.kod_pocztowy }}</div>
+        Kod Pocztowy
+      </div>
+    </li>
+    <li
+      class="list-group-item d-flex justify-content-between align-items-start"
+    >
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">{{ data.kraj }}</div>
+        Kraj
+      </div>
+    </li>
+  </ol>
+</div>
+
+{% else %} Nie istnieje taki adres. {% endif %} {% endblock %}

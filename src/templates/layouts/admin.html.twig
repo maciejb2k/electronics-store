@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pl">
+  {% include('/inc/head.html.twig') %}
+
+  <body>
+    <div class="admin-panel">
+      <aside class="admin-aside">
+        <div class="admin-aside__title">Sklep Komputerowy</div>
+        <div class="admin-aside__desc">Panel administratora</div>
+        <nav class="admin-aside__nav">
+          <ul class="admin-aside__list">
+            <li>
+              <a
+                href="{{ url("/") }}"
+                class="admin-aside__link"
+                ><i data-feather="home" class="admin-aside__link-icon"></i>Home</a
+              >
+            </li>
+            <br>
+            <li>
+              <a href="{{ route('zamowienia.index') }}" class="admin-aside__link"
+                ><i data-feather="shopping-cart" class="admin-aside__link-icon"></i>Zamówienia</a
+              >
+            </li>
+            <li>
+              <a href="{{ route('produkty.index') }}" class="admin-aside__link"
+                ><i data-feather="box" class="admin-aside__link-icon"></i>Produkty</a
+              >
+            </li>
+            <li>
+              <a href="{{ route('uzytkownicy.index') }}" class="admin-aside__link"
+                ><i data-feather="users" class="admin-aside__link-icon"></i>Użytkownicy</a
+              >
+            </li>
+            <li>
+              <a href="{{ route('adresy.index') }}" class="admin-aside__link"
+                ><i data-feather="map" class="admin-aside__link-icon"></i>Adresy</a
+              >
+            </li>
+            <br>
+            <li>
+              <a href="{{ route('adresy.index') }}" class="admin-aside__link"
+                ><i data-feather="list" class="admin-aside__link-icon"></i>Transakcje</a
+              >
+            </li>
+            <br>
+            <li>
+              <a href="{{ route('adresy.index') }}" class="admin-aside__link"
+                ><i data-feather="arrow-left" class="admin-aside__link-icon"></i>Strona Główna</a
+              >
+            </li>
+
+          </ul>
+        </nav>
+      </aside>
+      <div class="admin-wrapper">
+        <header class="admin-header">
+          <p class="admin-header__title">Projekt zaliczeniowy Bazy Danych</p>
+          <div class="admin-header__user">
+            <img class="admin-header__user-av" src="{{
+              assets("img/avatar.png")
+            }}" alt="" />
+            <p class="admin-header__user-hello">Administrator</p>
+          </div>
+        </header>
+        <main class="admin-main">{% block content %} {% endblock %}</main>
+      </div>
+    </div>
+
+    {% include '/inc/footer.html.twig' %} {% block js %} {% endblock %}
+    <script>
+      feather.replace();
+    </script>
+  </body>
+</html>

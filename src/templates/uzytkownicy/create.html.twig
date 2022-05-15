@@ -1,0 +1,156 @@
+{% extends "/layouts/admin.html.twig" %}
+{% block content %}
+
+	<div class="container admin-form">
+		<div class="row mb-3">
+			<h1>Dodaj Użytkownika</h1>
+			<a href="{{ route("uzytkownicy.index") }}">Powrót do wszystkich użytkowników</a>
+		</div>
+
+		{% if sessionGet("error__add") %}
+			<div class="alert alert-danger mb-3">
+				{{ sessionShow("error__add") }}
+			</div>
+		{% endif %}
+
+		<form method="POST">
+			<div class="form-group mb-3">
+				<div class="mb-3">
+					<label for="imie" class="form-label">Imię</label>
+					<input value="Maciej" id="imie" name="imie" type="text" class="form-control"/>
+					<div class="invalid-feedback">Nieprawidłowe dane!</div>
+				</div>
+				<div class="mb-3">
+					<label for="nazwisko" class="form-label">Nazwisko</label>
+					<input value="Pompuj" id="nazwisko" name="nazwisko" type="text" class="form-control"/>
+					<div class="invalid-feedback">Nieprawidłowe dane!</div>
+				</div>
+				<div class="mb-3">
+					<label for="nazwa_uzytkownika" class="form-label">Nazwa Użytkownika</label>
+					<input id="nazwa_uzytkownika" value="pompkaLickMyF33t" name="nazwa_uzytkownika" type="text" class="form-control"/>
+					<div class="invalid-feedback">Nieprawidłowe dane!</div>
+				</div>
+				<div class="mb-3">
+					<label for="email" class="form-label">E-Mail</label>
+					<input id="email" value="pompuj@zeze.pl" name="email" type="email" class="form-control"/>
+					<div class="invalid-feedback">Nieprawidłowe dane!</div>
+				</div>
+				<div class="mb-3">
+					<label for="telefon" class="form-label">Telefon</label>
+					<input value="123456789" id="telefon" name="telefon" type="text" class="form-control"/>
+					<div class="invalid-feedback">Nieprawidłowe dane!</div>
+				</div>
+				<div class="mb-3">
+					<label for="haslo" class="form-label">Hasło</label>
+					<input value="password" id="haslo" name="haslo" type="password" class="form-control"/>
+					<div class="invalid-feedback">Nieprawidłowe dane!</div>
+				</div>
+				<div class="mb-3">
+					<label for="adres_id" class="form-label">Adresy</label>
+					<div class="autocomplete">
+						<input type="text" class="form-control autocomplete__input">
+						<input type="hidden" name="adres_id" id="adres_id">
+						<ul class="autocomplete__dropdown">
+            </ul>
+					</div>
+				</div>
+				<input class="btn btn-primary form-submit" type="submit" disabled value="Dodaj"/>
+			</div>
+		</form>
+	</div>
+
+{% endblock %}
+
+{% block js %}
+	<script>
+    (function () {
+      const autocompleteInput = document.querySelector(".autocomplete__input");
+      const formSubmit = document.querySelector(".form-submit");
+      const autocompleteDropdown = document.querySelector(".autocomplete__dropdown");
+      const adresIdInput = document.getElementById("adres_id");
+
+      function delay(callback, ms) {
+        var timer = 0;
+
+        return function () {
+          var context = this,
+            args = arguments;
+          clearTimeout(timer);
+          timer = setTimeout(function () {
+            callback.apply(context, args);
+          }, ms || 0);
+        };
+      }
+
+      autocompleteInput.addEventListener("keyup", function(e) {
+        if(adresIdInput.value) {
+          autocompleteInput.classList.remove("is-valid");
+          autocompleteInput.classList.add("is-invalid");
+          adresIdInput.value = "";
+          formSubmit.setAttribute('disabled', '');
+          autocompleteDropdown.style.display = "none";
+        }
+      });
+
+      autocompleteInput.addEventListener("keyup", delay(async function(e) {
+        let value = e.target.value;
+        autocompleteDropdown.innerHTML = "";
+
+        if(!value) {
+          autocompleteDropdown.style.display = "none";
+          return;
+        }
+
+        if(value.length < 3) return;
+
+        const { data } = await axios.post('{{route("adresy.search")}}', { name: value });
+        if(!data.array) return;
+
+        const arr = JSON.parse(data.array);
+        if(arr.length == 0) {
+          autocompleteDropdown.style.display = "none";
+          return;
+        }
+
+        arr.forEach(item => {
+          let text = `${item.ulica} ${item.nr_mieszkania}, ${item.kod_pocztowy} ${item.miasto}`;
+
+          let li = document.createElement('li');
+          li.classList.add("autocomplete__dropdown-item");
+          li.dataset.id = item.id;
+          li.innerText = text;
+
+          li.addEventListener("click", function() {
+            autocompleteInput.value = this.innerText;
+            adresIdInput.value = this.dataset.id;
+            autocompleteDropdown.style.display = "none";
+
+            if(autocompleteInput.classList.contains("is-invalid")) {
+              autocompleteInput.classList.remove("is-invalid");
+            }
+
+            autocompleteInput.classList.add("is-valid");
+            formSubmit.removeAttribute('disabled');
+          });
+
+          autocompleteDropdown.appendChild(li);
+        });
+
+        autocompleteDropdown.style.display = "block";
+      }, 500));
+
+      document.addEventListener("click", function(e) {
+        if(autocompleteDropdown.style.display == "block" && e.target.tagName != "LI" && e.target.tagName != "INPUT") {
+          autocompleteDropdown.style.display = "none";
+        }
+      });
+
+      autocompleteInput.addEventListener("focus", function() {
+        if(autocompleteDropdown.style.display == "none" && autocompleteDropdown.innerHTML) {
+          autocompleteDropdown.style.display = "block";
+        }
+      });  
+    })();
+
+	</script>
+{% endblock %}

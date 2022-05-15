@@ -1,0 +1,43 @@
+{% extends "/layouts/admin.html.twig" %}
+{% block content %}
+
+	<div class="container admin-form">
+		<div class="row mb-3">
+			<h1>Dodaj Produkt</h1>
+			<a class="" href="{{ route("produkty.index") }}">Powrót do wszystkich produktów</a>
+		</div>
+
+		{% if sessionGet("error__add") %}
+			<div class="alert alert-danger mb-3">
+				{{ sessionShow("error__add") }}
+			</div>
+		{% endif %}
+
+		<form method="POST">
+			<div class="form-group mb-3">
+				<div class="mb-3">
+					<label for="nazwa" class="form-label">Nazwa</label>
+					<input value="Karta graficzna GeForce RTX 3060" id="nazwa" name="nazwa" type="text" class="form-control"/>
+				</div>
+				<div class="mb-3">
+					<label for="kod_producenta" class="form-label">Kod Producenta</label>
+					<input value="b20awh0" id="kod_producenta" name="kod_producenta" type="text" class="form-control"/>
+				</div>
+				<div class="mb-3">
+					<label for="cena" class="form-label">Cena</label>
+					<input id="cena" value="2500" name="cena" type="number" mix="0" max="100000" class="form-control"/>
+				</div>
+				<div class="mb-3">
+					<label for="opis" class="form-label">Opis</label>
+					<textarea class="form-control" name="opis" id="opis" cols="5" rows="7">Pamiec: 12 GB, Rodzaj pamieci: GDDR6, Zlacza: HDMI 2.1 - 1 szt., DisplayPort 1.4a - 3 szt.</textarea>
+				</div>
+				<div class="mb-3">
+					<label for="kategoria" class="form-label">Kategoria</label>
+					<input value="Karty graficzne pur" id="kategoria" name="kategoria" type="text" class="form-control"/>
+				</div>
+				<input class="btn btn-primary" type="submit" value="Dodaj"/>
+			</div>
+		</form>
+	</div>
+
+{% endblock %}

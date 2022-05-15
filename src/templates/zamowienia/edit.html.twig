@@ -1,0 +1,130 @@
+{% extends "/layouts/admin.html.twig" %}
+{% block content %}
+
+	<div class="container">
+		<div class="row mb-4">
+			<h1>Zamówienie #{{zamowienie.id}}</h1>
+			<p>Data złożenia: {{zamowienie.data_zamowienia}} - <a class="" href="{{ route("zamowienia.index") }}">Powrót do wszystkich zamówień</a></p>
+		</div>
+
+		{% if sessionGet("success__edit") %}
+			<div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+				{{ sessionShow("success__edit") }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		{% endif %}
+		{% if sessionGet("error__edit") %}
+    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+				{{ sessionShow("error__edit") }}
+			</div>
+		{% endif %}
+
+		<div class="row">
+			<div class="col-md-4">
+				<div class="">
+					<label class="form-label">Użytkownik - <a href="{{route('uzytkownicy.show', uzytkownik.id)}}">Przejdź</a></label>
+					<ol class="list-group mb-4">
+						<li class="list-group-item d-flex justify-content-between align-items-start">
+							<div class="ms-2 me-auto">
+								<div class="fw-bold">{{ uzytkownik.imie }}
+									{{ uzytkownik.nazwisko }}</div>
+								Imię i Nazwisko
+							</div>
+						</li>
+						<li class="list-group-item d-flex justify-content-between align-items-start">
+							<div class="ms-2 me-auto">
+								<div class="fw-bold">{{ uzytkownik.nazwa_uzytkownika }}</div>
+								Nazwa Użytkownika
+							</div>
+						</li>
+						<li class="list-group-item d-flex justify-content-between align-items-start">
+							<div class="ms-2 me-auto">
+								<div class="fw-bold">{{ uzytkownik.email }}</div>
+								E-Mail
+							</div>
+						</li>
+						<li class="list-group-item d-flex justify-content-between align-items-start">
+							<div class="ms-2 me-auto">
+								<div class="fw-bold">+48{{ uzytkownik.telefon }}</div>
+								Telefon
+							</div>
+						</li>
+					</ol>
+				</div>
+
+				<div class="mb-4">
+					<label class="form-label">Adres</label>
+					<ol class="list-group">
+						<li class="list-group-item d-flex justify-content-between align-items-start">
+							<div class="ms-2 me-auto">
+								<div>{{ uzytkownik.ulica }}
+									{{ uzytkownik.nr_mieszkania }},</div>
+								<div>{{ uzytkownik.kod_pocztowy }}
+									{{ uzytkownik.miasto }}</div>
+								<div>{{ uzytkownik.kraj }}</div>
+							</div>
+						</li>
+					</ol>
+				</div>
+
+				<div class="mb-4">
+					<label class="form-label">Metoda płatności</label>
+					<ol class="list-group">
+						<li class="list-group-item d-flex justify-content-between align-items-start">
+							<div class="ms-2 me-auto">
+								<div>{{zamowienie.forma_platnosci|capitalize}}</div>
+							</div>
+						</li>
+					</ol>
+				</div>
+
+				<div style="border-top: 1px solid #eaeaea; border-bottom: 1px solid #eaeaea;" class="pt-4 pb-4 mb-3">
+					<form method="POST">
+						<label for="status_zamowienia" class="form-label">Zmień status zamówienia</label>
+						<div class="input-group mb-3">
+							<select class="form-select me-3" name="status_zamowienia" id="status_zamowienia" aria-label="Default select example">
+								<option {% if zamowienie.status_zamowienia|lower == "złożone" %} selected {% endif %} value="złożone">Złożone</option>
+								<option {% if zamowienie.status_zamowienia|lower == "przyjęte do realizacji" %} selected {% endif %} value="przyjęte do realizacji">Przyjęte do realizacji</option>
+								<option {% if zamowienie.status_zamowienia|lower == "oczekiwanie na wpłatę" %} selected {% endif %} value="oczekiwanie na wpłatę">Oczekiwanie na wpłatę</option>
+								<option {% if zamowienie.status_zamowienia|lower == "wysłane" %} selected {% endif %} value="wysłane">Wysłane</option>
+								<option {% if zamowienie.status_zamowienia|lower == "dostarczone" %} selected {% endif %} value="dostarczone">Dostarczone</option>
+								<option {% if zamowienie.status_zamowienia|lower == "anulowane" %} selected {% endif %} value="anulowane">Anulowane</option>
+							</select>
+							<input type="submit" class="btn btn-success" value="Zmień">
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="col-md-8">
+				<div class="mb-3">
+					<label class="form-label">Zamówione produkty</label>
+					<ol class="list-group list-group-numbered order-cart">
+						{% for produkt in produkty %}
+							<li class="list-group-item d-flex justify-content-between align-items-start">
+								<div class="ms-2 me-auto">
+									<div class="fw-bold">{{produkt.nazwa}}</div>
+									<p class="mb-1">Cena:
+										{{produkt.cena}}
+										zł,
+										<i style="color: #666">{{produkt.kod_producenta}}</i>
+									</p>
+									<p style="font-size: 12px; color: #333">{{produkt.opis}}</p>
+								</div>
+								<span class="badge bg-primary rounded-pill me-1">Ilość:
+									{{produkt.ilosc}}</span>
+							</li>
+						{% else %}
+							Brak produktów.
+						{% endfor %}
+					</ol>
+				</div>
+				<div class="mb-3" style="text-align: right;">
+					<div>Łączna wartość zamówienia:</div>
+					<h2>
+						<span class="cart-value">{{zamowienie.kwota}}</span>
+						zł</h2>
+				</div>
+			</div>
+		</div>
+
+	{% endblock %}
