@@ -11,9 +11,30 @@ class AdminHome extends Controller
 
   public function index()
   {
+    $this->db->query("SELECT COUNT(*) FROM produkty");
+    $iloscProduktow = $this->db->singleRow();
+
+    $this->db->query("SELECT COUNT(*) FROM uzytkownicy");
+    $iloscUzytkownikow = $this->db->singleRow();
+
+    $this->db->query("SELECT COUNT(*) FROM zamowienia");
+    $iloscZamowien = $this->db->singleRow();
+
+    $this->db->query("SELECT COUNT(*) FROM logi");
+    $iloscLogow = $this->db->singleRow();
+
+    $this->db->query("SELECT SUM(ilosc) FROM zamowienia_produkty;");
+    $iloscZamowionychProduktow = $this->db->singleRow();
+
     return $this->twig->render(
       'index.admin.html.twig',
-      []
+      [
+        "iloscProduktow" => $iloscProduktow["count"],
+        "iloscUzytkownikow" => $iloscUzytkownikow["count"],
+        "iloscZamowien" => $iloscZamowien["count"],
+        "iloscLogow" => $iloscLogow["count"],
+        "iloscZamowionychProduktow" => $iloscZamowionychProduktow["sum"],
+      ]
     );
   }
 
