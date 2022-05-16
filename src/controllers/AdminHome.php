@@ -27,7 +27,7 @@ class AdminHome extends Controller
     $iloscZamowionychProduktow = $this->db->singleRow();
 
     return $this->twig->render(
-      'index.admin.html.twig',
+      '/administrator/index.html.twig',
       [
         "iloscProduktow" => $iloscProduktow["count"],
         "iloscUzytkownikow" => $iloscUzytkownikow["count"],
@@ -59,7 +59,7 @@ class AdminHome extends Controller
       $username = mb_strtolower($firstName . $lastName . rand(0, 1000000));
       $email = $username . "@" . $faker->safeEmailDomain();
       $phone = $this->generatePhone();
-      $password = sha1($faker->password());
+      $password = sha1("password");
 
       echo "INSERT INTO uzytkownicy (data_rejestracji, email, haslo, imie, nazwa_uzytkownika, nazwisko, telefon, adres_id) VALUES ('{$faker->dateTimeThisYear()->format('Y-m-d H:i:s')}', '{$email}', '{$password}', '{$firstName}', '{$username}', '{$lastName}', '{$phone}', '{$i}');" . "<br>";
     }

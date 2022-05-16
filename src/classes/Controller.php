@@ -50,11 +50,16 @@ class Controller
       return $this->helpers->sessionShow($name);
     });
 
+    $isLoggedFn = new \Twig\TwigFunction('isLogged', function () {
+      return $this->helpers->isLogged();
+    });
+
     $this->twig->addFunction($routeFn);
     $this->twig->addFunction($urlFn);
     $this->twig->addFunction($assetsFn);
     $this->twig->addFunction($urlParamFn);
     $this->twig->addFunction($sessionGetFn);
     $this->twig->addFunction($sessionShowFn);
+    $this->twig->addFunction($isLoggedFn);
   }
 }

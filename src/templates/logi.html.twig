@@ -29,6 +29,7 @@
   <div class="d-flex justify-content-between align-items-end mb-5 pb-2">
     <h1>Logi</h1>
     <div class="d-flex align-items-end">
+      {#
       <form method="GET">
         <div class="d-flex align-items-end">
           <div class="me-2" role="group" aria-label="Third group">
@@ -41,6 +42,7 @@
           </div>
         </div>
       </form>
+      #}
     </div>
   </div>
 
@@ -48,9 +50,11 @@
     <thead>
       <tr>
         <th scope="col" style="width: 10%">#</th>
-        <th scope="col" style="width: 15%">Tabela</th>
+        <th scope="col" style="width: 20%">Tabela</th>
+        {#
         <th scope="col" style="width: 15%">Uzytkownik</th>
-        <th scope="col" style="width: 10%">Akcja</th>
+        #}
+        <th scope="col" style="width: 20%">Akcja</th>
         <th scope="col" style="width: 30%">Opis</th>
         <th scope="col" style="width: 20%">Data Utworzenia</th>
       </tr>
@@ -60,10 +64,14 @@
       <tr>
         <th class="align-middle" scope="row">{{ log.id }}</th>
         <td class="align-middle">{{ log.tabela }}</td>
+        {#
         <td class="align-middle">{{ log.uzytkownik }}</td>
+        #}
         <td class="align-middle">{{ log.akcja }}</td>
         <td class="align-middle">{{ log.opis }}</td>
-        <td class="align-middle">{{ log.data_utworzenia }}</td>
+        <td class="align-middle">
+          {{ log.data_utworzenia|date('d/m/Y H:i:s') }}
+        </td>
         {#
         <td class="align-middle">
           <div class="d-flex align-items-center">

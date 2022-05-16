@@ -1,0 +1,54 @@
+{% extends "/layouts/user.html.twig" %} {% block content %}
+<div class="container" style="max-width: 650px;">
+  <div class="row mb-4">
+    <h1>Zamówienie #{{zamowienie.id}}</h1>
+    <p>Data złożenia: {{zamowienie.data_zamowienia|date('d/m/Y H:i:s')}} - <a class="" href="{{ route("user.index") }}">Powrót do panelu głównego</a></p>
+  </div>
+
+  {% if sessionGet("success__edit") %}
+  <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+    {{ sessionShow("success__edit") }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+  {% if sessionGet("error__edit") %}
+    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+      {{ sessionShow("error__edit") }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endif %}
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="mb-3">
+        <label class="form-label">Zamówione produkty</label>
+        <ol class="list-group list-group-numbered order-cart">
+          {% for produkt in produkty %}
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <div class="fw-bold">{{produkt.nazwa}}</div>
+                <p class="mb-1">Cena:
+                  {{produkt.cena}}
+                  zł,
+                  <i style="color: #666">{{produkt.kod_producenta}}</i>
+                </p>
+                <p style="font-size: 12px; color: #333">{{produkt.opis}}</p>
+              </div>
+              <span class="badge bg-primary rounded-pill me-1">Ilość:
+                {{produkt.ilosc}}</span>
+            </li>
+          {% else %}
+            Brak produktów.
+          {% endfor %}
+        </ol>
+      </div>
+      <div class="mb-3" style="text-align: right;">
+        <div>Łączna wartość zamówienia:</div>
+        <h2>
+          <span class="cart-value">{{zamowienie.kwota}}</span>
+          zł</h2>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

@@ -19,19 +19,21 @@ class Produkty extends Controller
     try {
       if (isset($search)) {
         $this->db->query(
-          "SELECT * FROM produkty_paginuj_wyszukaj(:search, :page, :perPage)",
+          "SELECT * FROM produkty_paginuj_wyszukaj(:search, :page, :perPage, :showAll)",
           array(
             "search" => $search,
             "page" => $page,
             "perPage" => $perPage,
+            "showAll" => "true"
           )
         );
         $produkty = $this->db->multipleRows();
 
         $this->db->query(
-          "SELECT COUNT(*) FROM produkty_wyszukaj(:search)",
+          "SELECT COUNT(*) FROM produkty_wyszukaj(:search, :showAll)",
           array(
-            "search" => $search
+            "search" => $search,
+            "showAll" => "true",
           )
         );
         $rowCount = $this->db->singleRow();
@@ -92,13 +94,14 @@ class Produkty extends Controller
 
     try {
       $this->db->query(
-        "CALL produkty_dodaj(:nazwa, :kod_producenta, :cena, :opis, :kategoria);",
+        "CALL produkty_dodaj(:nazwa, :kod_producenta, :cena, :opis, :kategoria, :ilosc);",
         array(
           "nazwa" => $_POST["nazwa"],
           "kod_producenta" => $_POST["kod_producenta"],
           "cena" => $_POST["cena"],
           "opis" => $_POST["opis"],
           "kategoria" => $_POST["kategoria"],
+          "ilosc" => $_POST["ilosc"],
         )
       );
     } catch (PDOException $e) {
@@ -161,7 +164,7 @@ class Produkty extends Controller
 
     try {
       $this->db->query(
-        "CALL produkty_edytuj(:id, :nazwa, :kod_producenta, :cena, :opis, :kategoria);",
+        "CALL produkty_edytuj(:id, :nazwa, :kod_producenta, :cena, :opis, :kategoria, :ilosc);",
         array(
           "id" => $id,
           "nazwa" => $_POST["nazwa"],
@@ -169,6 +172,7 @@ class Produkty extends Controller
           "cena" => $_POST["cena"],
           "opis" => $_POST["opis"],
           "kategoria" => $_POST["kategoria"],
+          "ilosc" => $_POST["ilosc"],
         )
       );
     } catch (PDOException $e) {
@@ -217,9 +221,10 @@ class Produkty extends Controller
 
     try {
       $this->db->query(
-        "SELECT * FROM produkty_wyszukaj(:name)",
+        "SELECT * FROM produkty_wyszukaj(:name, :showAll)",
         array(
-          "name" => $name
+          "name" => $name,
+          "showAll" => "false",
         )
       );
       $row = $this->db->multipleRows();

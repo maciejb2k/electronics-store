@@ -193,7 +193,7 @@ class Zamowienia extends Controller
       $row = $this->db->singleRow();
     } catch (PDOException $e) {
       return $this->helpers->getResponse()->httpCode(404)->json([
-        'array' => json_encode($e->getMessage()),
+        'message' => $e->getMessage(),
       ]);
     };
 

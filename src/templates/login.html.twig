@@ -1,0 +1,55 @@
+{% extends "/layouts/base.html.twig" %} {% block content %}
+<div class="container">
+  {% if sessionGet("success__edit") %}
+  <div
+    class="alert alert-success alert-dismissible fade show mb-4"
+    role="alert"
+  >
+    {{ sessionShow("success__edit") }}
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+  </div>
+  {% endif %} {% if sessionGet("error__login") %}
+  <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+    {{ sessionShow("error__login") }}
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+  </div>
+  {% endif %}
+
+  <form method="POST" style="width: 600px" class="mt-5">
+    <div class="mb-3">
+      <label for="exampleInputEmail1" class="form-label"
+        >E-Mail / Nazwa Użytkownika</label
+      >
+      <input
+        type="text"
+        class="form-control"
+        id="exampleInputEmail1"
+        aria-describedby="emailHelp"
+        name="email"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="exampleInputPassword1" class="form-label">Hasło</label>
+      <input
+        type="password"
+        class="form-control"
+        id="exampleInputPassword1"
+        name="haslo"
+        value="password"
+      />
+    </div>
+    <input type="submit" class="btn btn-primary" value="Zaloguj" />
+  </form>
+</div>
+
+{% endblock %}

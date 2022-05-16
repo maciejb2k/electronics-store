@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    {% include('/inc/head.html.twig') %} {% block head %}{% endblock %}
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="{{route("home.index")}}">Sklep Komputerowy</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          </ul>
+          <form class="d-flex">
+            {% if isLogged() %}
+              <a
+                role="button"
+                class="btn btn-success me-2"
+                aria-current="page"
+                href="{{isLogged() == "administrator" ? route("admin.index") : route("user.index")}}"
+                >{{isLogged() == "administrator" ? "Panel Administratora" : "Panel Użytkownika"}}</a
+              >
+              <a
+                role="button"
+                class="btn btn-outline-success"
+                aria-current="page"
+                href="{{route("login.logout")}}"
+                >Wyloguj</a
+              >
+            {% else %}
+              <a
+                role="button"
+                class="btn btn-outline-success"
+                aria-current="page"
+                href="{{route("login.index")}}"
+                >Logowanie</a
+              >
+            {% endif %}
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+
+    {% include '/inc/footer.html.twig' %} {% block js %}{% endblock %}
+    <script>
+      feather.replace();
+    </script>
+  </body>
+</html>

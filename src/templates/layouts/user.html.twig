@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    {% include('/inc/head.html.twig') %} {% block head %}{% endblock %}
+  </head>
+
+  <body>
+    <div class="admin-panel">
+      <aside class="admin-aside">
+        <div class="admin-aside__title">Sklep Komputerowy</div>
+        <div class="admin-aside__desc">Panel użytkownika</div>
+        <nav class="admin-aside__nav">
+          <ul class="admin-aside__list">
+            <li>
+              <a href="{{ route('user.index') }}" class="admin-aside__link">
+                <i data-feather="home" class="admin-aside__link-icon"></i>Strona
+                Główna</a
+              >
+            </li>
+            <li>
+              <a href="{{ route('login.logout') }}" class="admin-aside__link">
+                <i data-feather="log-out" class="admin-aside__link-icon"></i
+                >Wyloguj</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </aside>
+      <div class="admin-wrapper">
+        <header class="admin-header">
+          <p class="admin-header__title">
+            UR - Projekt zaliczeniowy Bazy Danych - Maciej Biel, Kamil Data,
+            Karol Bobowski
+          </p>
+          <div class="admin-header__user">
+            <img class="admin-header__user-av" src="{{
+              assets("img/avatar.png")
+            }}" alt=""/>
+            <p class="admin-header__user-hello">Użytkownik</p>
+          </div>
+        </header>
+        <main class="admin-main">{% block content %}{% endblock %}</main>
+      </div>
+    </div>
+
+    {% include '/inc/footer.html.twig' %} {% block js %}{% endblock %}
+    <script>
+      feather.replace();
+    </script>
+  </body>
+</html>

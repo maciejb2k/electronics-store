@@ -1,0 +1,351 @@
+{% extends "/layouts/user.html.twig" %} {% block content %}
+
+<div class="container" style="max-width: 650px;">
+  <div class="row mb-4">
+    <h1>Złóż Zamówienie</h1>
+    <a class="" href="{{ route("zamowienia.index") }}">Powrót do wszystkich zamówień</a>
+  </div>
+
+<div id="alert-error-placeholder"></div>
+
+<form method="POST" class="order-form">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="form-group mb-3">
+        <div class="mb-5">
+          <label for="product-autocomplete" class="form-label">Wyszukaj produkt</label>
+          <div class="autocomplete" id="product-autocomplete">
+            <div class="input-group mb-3">
+              <input type="text" placeholder="Nazwa, Kod producenta" class="form-control autocomplete__input">
+              <input type="hidden" name="produkt_id" id="produkt_id">
+              <span class="input-group-text">Ilość</span>
+              <input style="max-width: 100px;" type="number" class="form-control cart-quantity" min="1" value="1">
+              <button class="btn btn-primary cart-add">Dodaj</button>
+            </div>
+            <ul class="autocomplete__dropdown" style="height: 400px;">
+            </ul>
+          </div>
+        </div>
+        <div class="mb-3">
+          <ol class="list-group list-group-numbered order-cart"></ol>
+        </div>
+        <div class="mb-3" style="text-align: right;">
+          <div>Wartość koszyka:</div>
+          <h2><span class="cart-value">0</span> zł</h2>
+        </div>
+        <div class="mb-5">
+          <label class="form-label">Metoda płatności</label>
+          <select class="form-select" id="forma_platnosci" aria-label="Default select example">
+            <option selected value="karta kredytowa">Karta kredytowa</option>
+            <option value="przelew tradycyjny">Przelew tradycyjny</option>
+            <option value="blik">BLIK</option>
+            <option value="przelewy24">Przelewy24</option>
+          </select>
+        </div>
+      </div>
+      <input class="btn btn-success form-submit" type="submit" value="Załóż Zamówienie"/>
+    </div>
+  </div>
+</form>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script>
+  (function () {
+    const alertPlaceholder = document.getElementById("alert-error-placeholder");
+
+    const productAutocomplete = document.getElementById("product-autocomplete");
+    const formSubmit = document.querySelector(".form-submit");
+
+    const autocompleteInput = productAutocomplete.querySelector(".autocomplete__input");
+    const autocompleteDropdown = productAutocomplete.querySelector(".autocomplete__dropdown");
+    const hiddenInput = productAutocomplete.querySelector("#produkt_id");
+
+    // delay klawiatura
+    function delay(callback, ms) {
+      var timer = 0;
+
+      return function () {
+        var context = this,
+          args = arguments;
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+          callback.apply(context, args);
+        }, ms || 0);
+      };
+    }
+
+    // po wpisaniu w pole tekstowe do autocomplete, bez delay
+    autocompleteInput.addEventListener("keyup", function(e) {
+      if(hiddenInput.value) {
+        currentProduct = null;
+        autocompleteDropdown.innerHTML = "";
+
+        autocompleteInput.classList.remove("is-valid");
+        autocompleteInput.classList.add("is-invalid");
+        hiddenInput.value = "";
+        autocompleteDropdown.style.display = "none";
+      }
+    });
+
+    const alert = (message, type) => {
+      alertPlaceholder.innerHTML = "";
+
+      const wrapper = document.createElement('div')
+      wrapper.innerHTML = [
+        `<div class="alert alert-${type} fade show alert-dismissible" role="alert">`,
+        `   <div>${message}</div>`,
+        '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+        '</div>'
+      ].join('')
+
+      alertPlaceholder.append(wrapper)
+    }
+
+    // po wpisaniu w pole tekstowe do autocomplete, z delay
+    autocompleteInput.addEventListener("keyup", delay(async function(e) {
+      let value = e.target.value;
+      autocompleteDropdown.innerHTML = "";
+
+      if(!value) {
+        autocompleteDropdown.style.display = "none";
+        return;
+      }
+
+      if(value.length < 3) return;
+
+      const { data } = await axios.post('{{route("user.produkty.search")}}', { name: value });
+      if(!data.array) return;
+
+      const arr = JSON.parse(data.array);
+      if(arr.length == 0) {
+        autocompleteDropdown.style.display = "none";
+        return;
+      }
+
+      arr.forEach(item => {
+        let li = document.createElement('li');
+        li.classList.add("autocomplete__dropdown-item");
+
+        li.dataset.id = item.id;
+        li.dataset.kod_producenta = item.kod_producenta;
+        li.dataset.nazwa = item.nazwa;
+        li.dataset.opis = item.opis;
+        li.dataset.cena = item.cena;
+        li.dataset.ilosc = item.ilosc;
+
+        li.innerHTML = `
+          <p class="mb-2"><b>${item.nazwa}</b></p>
+          <p>Cena: ${item.cena} zł</p>
+          <p>W magazynie: ${item.ilosc}</p>
+          <p class="mb-2">Kod producenta: <i>${item.kod_producenta}</i></p>
+          <p>${item.opis}</p>
+        `;
+
+        li.addEventListener("click", function() {
+          autocompleteInput.value = `${this.dataset.nazwa}`;
+
+          currentProduct = {
+            id: this.dataset.id,
+            kod_producenta: this.dataset.kod_producenta,
+            nazwa: this.dataset.nazwa,
+            opis: this.dataset.opis,
+            cena: this.dataset.cena,
+            ilosc: this.dataset.ilosc,
+          }
+
+          autocompleteInput.dataset.id = this.dataset.id;
+          autocompleteInput.dataset.kod_producenta = this.dataset.kod_producenta;
+          autocompleteInput.dataset.nazwa = this.dataset.nazwa;
+          autocompleteInput.dataset.opis = this.dataset.opis;
+          autocompleteInput.dataset.cena = this.dataset.cena;
+          autocompleteInput.dataset.ilosc = this.dataset.ilosc;
+
+          hiddenInput.value = this.dataset.id;
+          autocompleteDropdown.style.display = "none";
+
+          if(autocompleteInput.classList.contains("is-invalid")) {
+            autocompleteInput.classList.remove("is-invalid");
+          }
+
+          autocompleteInput.classList.add("is-valid");
+          formSubmit.removeAttribute('disabled');
+        });
+
+        autocompleteDropdown.appendChild(li);
+      });
+
+      autocompleteDropdown.style.display = "block";
+    }, 500));
+
+    // aby schowac dropdown po odkliknięciu, odfocusowaniu inputa do wpisywania
+    document.addEventListener("click", function(e) {
+      if(autocompleteDropdown.style.display == "block" && e.target.tagName != "LI" && e.target.tagName != "INPUT") {
+        autocompleteDropdown.style.display = "none";
+      }
+    });
+
+    // by pokazać dropdown po kliknieciu w input do wpisywania
+    autocompleteInput.addEventListener("focus", function() {
+      if(autocompleteDropdown.style.display == "none" && autocompleteDropdown.innerHTML) {
+        autocompleteDropdown.style.display = "block";
+      }
+    });  
+
+    // Po kliknięciu złóż zamówienie
+    document.querySelector(".order-form").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const forma_platnosci = document.getElementById("forma_platnosci").value;
+
+      if(!cart.length) {
+        alert('Dodaj produkty do zamówienia.', 'danger');
+        return;
+      }
+
+      if(!forma_platnosci) {
+        alert('Podaj forme płatności.', 'danger');
+        return;
+      }
+
+      console.log(forma_platnosci);
+
+      let array_produkty = [];
+      let array_ilosci = [];
+
+      cart.forEach(item => {
+        array_produkty.push(item.product.id);
+        array_ilosci.push(item.quantity);
+      })
+
+      array_produkty = array_produkty.join(",");
+      array_ilosci = array_ilosci.join(",");
+
+      const payload = { 
+        array_produkty,
+        array_ilosci,
+        forma_platnosci
+      };
+
+      console.log(payload);
+
+      try {
+        const res = await axios.post('{{route("user.zamowienie.store")}}', payload);
+        window.location.replace(`{{route('user.index')}}`);
+      } catch (err) {
+        console.log(err.response.data.message);
+        let msg = err.response.data.message.split(":")[3].trim().replace('CONTEXT', '');
+        alert(`Wystąpił błąd: ${msg}`, 'danger');
+      }
+    })
+
+    let cart = [];
+    let cartValue = 0;
+
+    const addToCart = document.querySelector(".cart-add");
+    const productsList = document.querySelector(".order-cart");
+    const cartValueItem = document.querySelector(".cart-value");
+    const cartQuantity = document.querySelector(".cart-quantity");
+
+    let currentProduct = null;
+
+    // po kliknieciu guzika dodaj zamowienie
+    addToCart.addEventListener("click", function(e) {
+      e.preventDefault();
+
+      const quantity = Number(cartQuantity.value);
+
+      if(!currentProduct) {
+        alert('Podaj produkty.', 'danger');
+        return false;
+      }
+
+      if(quantity > currentProduct.ilosc) {
+        alert('Niewystarczająca ilosć produktów na magazynie.', 'danger');
+        return false;
+      }
+
+      const isInCart = cart.some(item => item.product.id === currentProduct.id);
+
+      if(isInCart) {
+        alert('Taki produkt już istnieje.', 'danger');
+        return false;
+      }
+
+      cart.push({
+        product: currentProduct,
+        quantity,
+      });
+
+      console.log(cart);
+      renderCart();
+
+      // clear inputa
+      autocompleteInput.value = "";
+      hiddenInput.value = "";
+      currentProduct = null;
+      autocompleteDropdown.innerHTML = "";
+      autocompleteInput.classList.remove("is-valid");
+      autocompleteInput.classList.remove("is-invalid");
+      hiddenInput.value = "";
+      cartQuantity.value = 1;
+    });
+
+    // render koszyka
+    const renderCart = () => {
+      cartValue = 0;
+
+      if(!cart.length) {
+        cartValueItem.innerHTML = cartValue;
+        productsList.innerHTML = `<p style="margin: 10px 0; text-align: center; color: #8b8b8b; border-top: 1px solid #eaeaea; border-bottom: 1px solid #eaeaea; padding: 20px 0;">
+          Brak produktów w koszyku
+          </p>`;
+        return;
+      }
+
+      productsList.innerHTML = "";
+
+      cart.forEach((item) => {
+        // Cena
+        cartValue += item.quantity * item.product.cena;
+
+        const product = document.createElement("li");
+        product.classList = "list-group-item d-flex justify-content-between align-items-start";
+        product.dataset.id = item.product.id;
+        product.innerHTML = `
+          <div class="ms-2 me-auto">
+            <div class="fw-bold">${item.product.nazwa}</div>
+            <p class="mb-1">Cena: ${item.product.cena} zł, <i style="color: #666">${item.product.kod_producenta}</i></p>
+            <p style="font-size: 12px; color: #333">${item.product.opis}</p>
+            
+          </div>
+          <span class="badge bg-primary rounded-pill me-1">Ilość: ${item.quantity}</span>
+        `;
+
+        const closeButton = document.createElement("span");
+        closeButton.classList = "badge bg-danger rounded-pill hover";
+        closeButton.innerHTML = "x";
+        closeButton.style = "display: flex; align-items: center;";
+
+        closeButton.addEventListener("click", function(e) {
+          let id = e.target.parentElement.dataset.id;
+          cart = cart.filter(item => item.product.id !== id);
+          e.target.parentElement.remove();
+          renderCart();
+        })
+
+        product.appendChild(closeButton);
+        productsList.appendChild(product);
+
+        cartValueItem.innerHTML = cartValue;
+      });
+    }
+
+    renderCart();
+  })();
+
+</script>
+{% endblock %}
+

@@ -32,7 +32,11 @@
 				</div>
 				<div class="mb-3">
 					<label for="cena" class="form-label">Cena</label>
-					<input id="{{data.cena}}" value="2500" name="cena" type="number" mix="0" max="100000" class="form-control"/>
+					<input id="cena" value="{{data.cena}}" name="cena" type="number" min="1" max="100000" step="0.01" class="form-control"/>
+				</div>
+				<div class="mb-3">
+					<label for="ilosc" class="form-label">Ilość</label>
+					<input id="ilosc" value="{{data.ilosc}}" name="ilosc" type="number" min="0" max="1000" class="form-control"/>
 				</div>
 				<div class="mb-3">
 					<label for="opis" class="form-label">Opis</label>

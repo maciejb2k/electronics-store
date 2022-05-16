@@ -32,7 +32,7 @@
                 <input style="max-width: 100px;" type="number" class="form-control cart-quantity" min="1" value="1">
                 <button class="btn btn-primary cart-add">Dodaj</button>
               </div>
-              <ul class="autocomplete__dropdown" style="height: 400px;">
+              <ul class="autocomplete__dropdown" style="height: 450px;">
               </ul>
             </div>
           </div>
@@ -240,11 +240,13 @@
           li.dataset.nazwa = item.nazwa;
           li.dataset.opis = item.opis;
           li.dataset.cena = item.cena;
+          li.dataset.ilosc = item.ilosc;
 
 					li.innerHTML = `
-            <p><b>${item.nazwa}</b></p>
-						<p >Cena: ${item.cena} zł</p>
-						<p class="mb-1">Kod producenta: <i>${item.kod_producenta}</i></p>
+            <p class="mb-2"><b>${item.nazwa}</b></p>
+						<p>Cena: ${item.cena} zł</p>
+						<p>W magazynie: ${item.ilosc}</p>
+						<p class="mb-2">Kod producenta: <i>${item.kod_producenta}</i></p>
 						<p>${item.opis}</p>
 					`;
 
@@ -257,6 +259,7 @@
               nazwa: this.dataset.nazwa,
               opis: this.dataset.opis,
               cena: this.dataset.cena,
+              ilosc: this.dataset.ilosc,
             }
 
             autocompleteInput.dataset.id = this.dataset.id;
@@ -264,6 +267,7 @@
             autocompleteInput.dataset.nazwa = this.dataset.nazwa;
             autocompleteInput.dataset.opis = this.dataset.opis;
             autocompleteInput.dataset.cena = this.dataset.cena;
+            autocompleteInput.dataset.ilosc = this.dataset.ilosc;
 
             hiddenInput.value = this.dataset.id;
             autocompleteDropdown.style.display = "none";
@@ -344,7 +348,9 @@
           const res = await axios.post('{{route("zamowienia.store")}}', payload);
           window.location.replace(`{{route('zamowienia.edit')}}${res.data.id}`);
         } catch (err) {
-          alert('Wystąpił błąd podczas składania zamówienia.', 'danger');
+          console.log(err.response.data.message);
+          let msg = err.response.data.message.split(":")[3].trim().replace('CONTEXT', '');
+          alert(`Wystąpił błąd: ${msg}`, 'danger');
         }
       })
 
@@ -366,6 +372,11 @@
 
         if(!currentProduct) {
           alert('Podaj produkty.', 'danger');
+          return false;
+        }
+
+        if(quantity > currentProduct.ilosc) {
+          alert('Niewystarczająca ilosć produktów na magazynie.', 'danger');
           return false;
         }
 

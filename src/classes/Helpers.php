@@ -79,6 +79,11 @@ class Helpers
     return $_SESSION[$name] ?? null;
   }
 
+  public function isLogged()
+  {
+    return $_SESSION['rola'] ?? null;
+  }
+
   public function buildPagination($pages, $currentPage)
   {
     $links = array();

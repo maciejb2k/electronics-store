@@ -61,7 +61,11 @@
         <td class="align-middle">{{ zamowienie.email }}</td>
         <td class="align-middle">{{ zamowienie.forma_platnosci|capitalize }}</td>
         <td class="align-middle">{{ zamowienie.kwota }} zł</td>
-        <td class="align-middle text-center {{ zamowienie.status_zamowienia|lower == 'anulowane' ? 'table-danger' : zamowienie.status_zamowienia|lower == 'złożone' ? 'table-success' : 'table-primary' }}">{{ zamowienie.status_zamowienia|lower|capitalize }}</td>
+        <td class="align-middle text-center 
+        {{zamowienie.status_zamowienia|lower == 'anulowane' ? 'table-danger' 
+        : zamowienie.status_zamowienia|lower == 'dostarczone' ? 'table-success' 
+        : zamowienie.status_zamowienia|lower == 'wysłane' ? 'table-warning' 
+        : 'table-primary' }}">{{ zamowienie.status_zamowienia|lower|capitalize }}</td>
         <td class="align-middle text-center ">{{ zamowienie.data_zamowienia|date("m/d/Y")}}</td>
         <td class="align-middle">
           <div class="d-flex align-items-center">
