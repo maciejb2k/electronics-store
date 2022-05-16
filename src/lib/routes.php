@@ -13,6 +13,7 @@ use Pecee\Http\Request;
 
 SimpleRouter::group(['prefix' => '/projekt-bazy/admin'], function () {
   SimpleRouter::get('/', [AdminHome::class, 'index'])->name("admin.index");
+  SimpleRouter::get('/seed', [AdminHome::class, 'generateSeed'])->name("admin.seed");
 
   // Adresy
   SimpleRouter::get('/adresy/', [Adresy::class, 'index'])->name("adresy.index");
