@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Classes\Controller;
-use App\Classes\Config;
 
 use \PDOException;
 
@@ -19,26 +18,41 @@ class Uzytkownicy extends Controller
 
     try {
       if (isset($search)) {
-        $this->db->query("SELECT * FROM uzytkownicy_paginuj_wyszukaj('{$search}', {$page}, {$perPage})");
+        $this->db->query(
+          "SELECT * FROM uzytkownicy_paginuj_wyszukaj(:search, :page, :perPage)",
+          array(
+            "search" => $search,
+            "page" => $page,
+            "perPage" => $perPage,
+          )
+        );
         $uzytkownicy = $this->db->multipleRows();
 
-        $this->db->query("SELECT COUNT(*) FROM uzytkownicy_wyszukaj('{$search}');");
+        $this->db->query(
+          "SELECT COUNT(*) FROM uzytkownicy_wyszukaj(:search)",
+          array(
+            "search" => $search
+          )
+        );
         $rowCount = $this->db->singleRow();
         $pages = ceil($rowCount["count"] / $perPage);
-        // print_r($rowCount);
-        // $pages = ceil($rowCount["count"] / $perPage);
       } else {
-        $this->db->query("SELECT * FROM uzytkownicy_pobierz({$page}, {$perPage})");
+        $this->db->query(
+          "SELECT * FROM uzytkownicy_pobierz(:page, :perPage)",
+          array(
+            "page" => $page,
+            "perPage" => $perPage,
+          )
+        );
         $uzytkownicy = $this->db->multipleRows();
 
         $this->db->query("SELECT * FROM uzytkownicy_pobierz_ilosc();");
         $rowCount = $this->db->singleRow();
+
         $pages = ceil($rowCount["uzytkownicy_pobierz_ilosc"] / $perPage);
-        // echo $pages;
-        // print_r($row["adresy_pobierz_ilosc"]);
       }
     } catch (PDOException $e) {
-      $this->db->error = $e->getMessage();
+      $_SESSION["error__index"] = $this->helpers->formatErrorMsg($e->getMessage());
     };
 
     // Pagination links builder
@@ -53,6 +67,7 @@ class Uzytkownicy extends Controller
     );
   }
 
+  // Wyświetla stronę do dodawania
   public function create()
   {
     return $this->twig->render(
@@ -61,35 +76,58 @@ class Uzytkownicy extends Controller
     );
   }
 
+  // Wykonuje dodawanie na stronę główną
   public function store()
   {
+    // TODO! debug - usunac
     foreach ($_POST as $key => $value) {
       echo 'Key = ' . $key . '<br />';
       echo 'Value= ' . $value . '<br /><br />';
     }
 
     try {
-      $this->db->query("CALL uzytkownicy_dodaj('{$_POST["imie"]}', '{$_POST["nazwisko"]}', '{$_POST["nazwa_uzytkownika"]}', '{$_POST["email"]}', '{$_POST["telefon"]}', '{$_POST["haslo"]}', '{$_POST["adres_id"]}');");
+      $this->db->query(
+        "CALL uzytkownicy_dodaj(:imie, :nazwisko, :nazwa_uzytkownika, :email, :telefon, :haslo, :adres_id);",
+        array(
+          "imie" => $_POST["imie"],
+          "nazwisko" => $_POST["nazwisko"],
+          "nazwa_uzytkownika" => $_POST["nazwa_uzytkownika"],
+          "email" => $_POST["email"],
+          "telefon" => $_POST["telefon"],
+          "haslo" => $_POST["haslo"],
+          "adres_id" => $_POST["adres_id"],
+        )
+      );
     } catch (PDOException $e) {
       $_SESSION["error__add"] = $this->helpers->formatErrorMsg($e->getMessage());
       return $this->helpers->redirectNamed("uzytkownicy.create");
     };
 
+    $_SESSION["success__index"] = "Poprawnie dodano nowego użytkownika";
     return $this->helpers->redirectNamed("uzytkownicy.index");
   }
 
+  // Wyświetla stronę z pojedyńczym rekordem
   public function show($id)
   {
     try {
-      $this->db->query("SELECT * FROM uzytkownicy_pobierz_szczegoly_wszystkie('$id');");
+      $this->db->query(
+        "SELECT * FROM uzytkownicy_pobierz_szczegoly_wszystkie(:id);",
+        array(
+          "id" => $id,
+        )
+      );
       $uzytkownik = $this->db->singleRow();
-      $uzytkownik = !empty($uzytkownik) ? $uzytkownik : null;
 
-      $id_uzytkownika = $uzytkownik["id"];
-
-      $this->db->query("SELECT * FROM zamowienia_znajdz_po_uid($id_uzytkownika);");
+      $this->db->query(
+        "SELECT * FROM zamowienia_znajdz_po_uid(:id_uzytkownika);",
+        array(
+          "id_uzytkownika" => $uzytkownik["id"]
+        )
+      );
       $zamowienia = $this->db->multipleRows();
     } catch (PDOException $e) {
+      // Jeżeli nie istnieje rekord z danym id to wróć na stronę główną.
       $_SESSION["error__index"] = $this->helpers->formatErrorMsg($e->getMessage());
       return $this->helpers->redirectNamed("uzytkownicy.index");
     };
@@ -100,13 +138,19 @@ class Uzytkownicy extends Controller
     ]);
   }
 
+  // Wyświetla stronę do edycji
   public function edit($id)
   {
     try {
-      $this->db->query("SELECT * FROM uzytkownicy_pobierz_szczegoly_wszystkie('$id');");
+      $this->db->query(
+        "SELECT * FROM uzytkownicy_pobierz_szczegoly_wszystkie(:id);",
+        array(
+          "id" => $id,
+        )
+      );
       $row = $this->db->singleRow();
-      $row = !empty($row) ? $row : null;
     } catch (PDOException $e) {
+      // Jeżeli nie istnieje rekord z danym id to wróć na stronę główną.
       $_SESSION["error__index"] = $this->helpers->formatErrorMsg($e->getMessage());
       return $this->helpers->redirectNamed("uzytkownicy.index");
     };
@@ -114,38 +158,61 @@ class Uzytkownicy extends Controller
     return $this->twig->render('/uzytkownicy/edit.html.twig', ['data' => $row]);
   }
 
+  // Wykonuje update danych, które zmieniamy
   public function update($id)
   {
+    // TODO! debug - usunac
     foreach ($_POST as $key => $value) {
       echo 'Key = ' . $key . '<br />';
       echo 'Value= ' . $value . '<br /><br />';
     }
 
     try {
-      $this->db->query("CALL uzytkownicy_edytuj('{$id}', '{$_POST["imie"]}', '{$_POST["nazwisko"]}', '{$_POST["nazwa_uzytkownika"]}', '{$_POST["email"]}', '{$_POST["telefon"]}', '{$_POST["haslo"]}', '{$_POST["adres_id"]}');");
+      $this->db->query(
+        "CALL uzytkownicy_edytuj(:id, :imie, :nazwisko, :nazwa_uzytkownika, :email, :telefon, :haslo, :adres_id);",
+        array(
+          "id" => $id,
+          "imie" => $_POST["imie"],
+          "nazwisko" => $_POST["nazwisko"],
+          "nazwa_uzytkownika" => $_POST["nazwa_uzytkownika"],
+          "email" => $_POST["email"],
+          "telefon" => $_POST["telefon"],
+          "haslo" => $_POST["haslo"],
+          "adres_id" => $_POST["adres_id"],
+        )
+      );
     } catch (PDOException $e) {
-      $_SESSION["error__add"] = $this->helpers->formatErrorMsg($e->getMessage());
+      $_SESSION["error__edit"] = $this->helpers->formatErrorMsg($e->getMessage());
       return $this->helpers->redirectNamed("uzytkownicy.edit");
-      die($e->getMessage());
     };
 
-    return $this->helpers->redirectNamed("uzytkownicy.index");
+    $_SESSION["success__edit"] = "Poprawnie edytowano użytkownika.";
+    return $this->helpers->redirectNamed("uzytkownicy.edit");
   }
 
+  // Usuwa podany rekord
   public function destroy($id)
   {
     try {
-      $this->db->query("DELETE FROM uzytkownicy WHERE id = $id");
+      $this->db->query(
+        "DELETE FROM uzytkownicy WHERE id = :id",
+        array(
+          "id" => $id
+        )
+      );
     } catch (PDOException $e) {
       $_SESSION["error__index"] = $this->helpers->formatErrorMsg($e->getMessage());
       return $this->helpers->redirectNamed("uzytkownicy.index");
     };
 
+    $_SESSION["success__index"] = "Poprawnie usunięto uzytkownika o id = $id";
     return $this->helpers->redirectNamed("uzytkownicy.index");
   }
 
+  // Wyszukiwanie użytkownika jako endpoint
   public function searchUser()
   {
+    // Pobranie parametrów przekazanych w body
     $request_body = file_get_contents('php://input');
     $data = json_decode($request_body, true);
     $name = $data['name'];
@@ -159,9 +226,17 @@ class Uzytkownicy extends Controller
     $name = trim($name);
 
     try {
-      $this->db->query("SELECT * FROM uzytkownicy_wyszukaj('$name')");
+      $this->db->query(
+        "SELECT * FROM uzytkownicy_wyszukaj(:name)",
+        array(
+          "name" => $name
+        )
+      );
       $row = $this->db->multipleRows();
     } catch (PDOException $e) {
+      return $this->helpers->getResponse()->httpCode(404)->json([
+        'error' => $this->helpers->formatErrorMsg($e->getMessage())
+      ]);
     };
 
     return $this->helpers->getResponse()->httpCode(200)->json([

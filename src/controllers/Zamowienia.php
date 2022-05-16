@@ -18,26 +18,41 @@ class Zamowienia extends Controller
 
     try {
       if (isset($search)) {
-        $this->db->query("SELECT * FROM zamowienia_paginuj_wyszukaj('{$search}', {$page}, {$perPage})");
+        $this->db->query(
+          "SELECT * FROM zamowienia_paginuj_wyszukaj(:search, :page, :perPage)",
+          array(
+            "search" => $search,
+            "page" => $page,
+            "perPage" => $perPage,
+          )
+        );
         $zamowienia = $this->db->multipleRows();
 
-        $this->db->query("SELECT COUNT(*) FROM zamowienia_wyszukaj('{$search}');");
+        $this->db->query(
+          "SELECT COUNT(*) FROM zamowienia_wyszukaj(:search)",
+          array(
+            "search" => $search
+          )
+        );
         $rowCount = $this->db->singleRow();
         $pages = ceil($rowCount["count"] / $perPage);
-        // print_r($rowCount);
-        // $pages = ceil($rowCount["count"] / $perPage);
       } else {
-        $this->db->query("SELECT * FROM zamowienia_paginuj({$page}, {$perPage})");
+        $this->db->query(
+          "SELECT * FROM zamowienia_paginuj(:page, :perPage)",
+          array(
+            "page" => $page,
+            "perPage" => $perPage,
+          )
+        );
         $zamowienia = $this->db->multipleRows();
 
         $this->db->query("SELECT * FROM zamowienia_pobierz_ilosc();");
         $rowCount = $this->db->singleRow();
+
         $pages = ceil($rowCount["zamowienia_pobierz_ilosc"] / $perPage);
-        // echo $pages;
-        // print_r($row["adresy_pobierz_ilosc"]);
       }
     } catch (PDOException $e) {
-      $this->db->error = $e->getMessage();
+      $_SESSION["error__index"] = $this->helpers->formatErrorMsg($e->getMessage());
     };
 
     // Pagination links builder
@@ -52,6 +67,7 @@ class Zamowienia extends Controller
     );
   }
 
+  // Wyświetla stronę do dodawania
   public function create()
   {
     return $this->twig->render(
@@ -60,57 +76,35 @@ class Zamowienia extends Controller
     );
   }
 
-  public function store()
-  {
-    foreach ($_POST as $key => $value) {
-      echo 'Key = ' . $key . '<br />';
-      echo 'Value= ' . $value . '<br /><br />';
-    }
-
-    if (empty($_POST["cena"])) {
-      $_POST["cena"] = 0;
-    }
-
-    try {
-      $this->db->query("CALL zamowienia_dodaj('{$_POST["nazwa"]}', '{$_POST["kod_producenta"]}', '{$_POST["cena"]}', '{$_POST["opis"]}', '{$_POST["kategoria"]}');");
-    } catch (PDOException $e) {
-      $_SESSION["error__add"] = $this->helpers->formatErrorMsg($e->getMessage());
-      return $this->helpers->redirectNamed("zamowienia.create");
-    };
-
-    return $this->helpers->redirectNamed("zamowienia.index");
-  }
-
-  public function show($id)
-  {
-    try {
-      $this->db->query("SELECT * FROM zamowienia_pobierz('$id');");
-      $row = $this->db->singleRow();
-      $row = !empty($row) ? $row : null;
-    } catch (PDOException $e) {
-      $_SESSION["error__index"] = $this->helpers->formatErrorMsg($e->getMessage());
-      return $this->helpers->redirectNamed("zamowienia.index");
-    };
-
-    return $this->twig->render('/zamowienia/show.html.twig', ['data' => $row]);
-  }
-
+  // Wyświetla stronę do edycji
   public function edit($id)
   {
     try {
       // Pobierz zamówienie
-      $this->db->query("SELECT * FROM zamowienia_znajdz('$id');");
+      $this->db->query(
+        "SELECT * FROM zamowienia_znajdz(:id);",
+        array(
+          "id" => $id
+        )
+      );
       $zamowienie = $this->db->singleRow();
-      $zamowienie = !empty($zamowienie) ? $zamowienie : null;
-
-      $uzytkownik_id = $zamowienie['uzytkownik_id'];
 
       // Pobierz użytkownika
-      $this->db->query("SELECT * FROM uzytkownicy_pobierz_szczegoly_wszystkie('$uzytkownik_id')");
+      $this->db->query(
+        "SELECT * FROM uzytkownicy_pobierz_szczegoly_wszystkie(:uzytkownik_id)",
+        array(
+          "uzytkownik_id" => $zamowienie['uzytkownik_id']
+        )
+      );
       $uzytkownik = $this->db->singleRow();
 
       // Pobierz produkty
-      $this->db->query("SELECT * FROM zamowienia_pobierz_produkty('$id')");
+      $this->db->query(
+        "SELECT * FROM zamowienia_pobierz_produkty(:id)",
+        array(
+          "id" => $id
+        )
+      );
       $produkty = $this->db->multipleRows();
     } catch (PDOException $e) {
       $_SESSION["error__index"] = $this->helpers->formatErrorMsg($e->getMessage());
@@ -124,42 +118,37 @@ class Zamowienia extends Controller
     ]);
   }
 
+  // Wykonuje update danych, które zmieniamy
   public function update($id)
   {
+    // TODO! debug - usunac
     foreach ($_POST as $key => $value) {
       echo 'Key = ' . $key . '<br />';
       echo 'Value= ' . $value . '<br /><br />';
     }
 
     try {
-      $this->db->query("CALL zamowienia_zmien_status('$id', '{$_POST["status_zamowienia"]}');");
+      $this->db->query(
+        "CALL zamowienia_zmien_status(:id, :status_zamowienia);",
+        array(
+          "id" => $id,
+          "status_zamowienia" => $_POST["status_zamowienia"]
+        )
+      );
     } catch (PDOException $e) {
       $_SESSION["error__edit"] = $this->helpers->formatErrorMsg($e->getMessage());
       return $this->helpers->redirectNamed("zamowienia.edit");
-      die($e->getMessage());
     };
 
     $_SESSION["success__edit"] = "Poprawnie edytowano status zamówienia";
     return $this->helpers->redirectNamed("zamowienia.edit", $id);
   }
 
-  public function destroy($id)
-  {
-    try {
-      $this->db->query("DELETE FROM zamowienia WHERE id = $id");
-    } catch (PDOException $e) {
-      $_SESSION["error__index"] = $this->helpers->formatErrorMsg($e->getMessage());
-      return $this->helpers->redirectNamed("zamowienia.index");
-    };
-
-    return $this->helpers->redirectNamed("zamowienia.index");
-  }
-
   public function storeApi()
   {
+    // Pobranie parametrów przekazanych w body
     $request_body = file_get_contents('php://input');
     $data = json_decode($request_body, true);
-
     $id_uzytkownika = $data['id_uzytkownika'] ?? null;
     $array_produkty = $data['array_produkty'] ?? null;
     $array_ilosci = $data['array_ilosci'] ?? null;
@@ -192,7 +181,15 @@ class Zamowienia extends Controller
     $forma_platnosci = trim($forma_platnosci);
 
     try {
-      $this->db->query("SELECT * FROM dodaj_zamowienie('$id_uzytkownika', '$forma_platnosci', '$array_produkty', '$array_ilosci');");
+      $this->db->query(
+        "SELECT * FROM dodaj_zamowienie(:id_uzytkownika, :forma_platnosci, :array_produkty, :array_ilosci);",
+        array(
+          "id_uzytkownika" => $id_uzytkownika,
+          "forma_platnosci" => $forma_platnosci,
+          "array_produkty" => $array_produkty,
+          "array_ilosci" => $array_ilosci,
+        )
+      );
       $row = $this->db->singleRow();
     } catch (PDOException $e) {
       return $this->helpers->getResponse()->httpCode(404)->json([

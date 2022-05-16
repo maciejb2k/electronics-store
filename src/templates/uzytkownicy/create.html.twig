@@ -7,11 +7,12 @@
 			<a href="{{ route("uzytkownicy.index") }}">Powrót do wszystkich użytkowników</a>
 		</div>
 
-		{% if sessionGet("error__add") %}
-			<div class="alert alert-danger mb-3">
-				{{ sessionShow("error__add") }}
-			</div>
-		{% endif %}
+    {% if sessionGet("error__add") %}
+      <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+        {{ sessionShow("error__add ") }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endif %}
 
 		<form method="POST">
 			<div class="form-group mb-3">

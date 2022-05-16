@@ -1,7 +1,94 @@
-{% extends "/layouts/admin.html.twig" %} {% block content %}
+{% extends "/layouts/admin.html.twig" %} {% block head %}
+
+<link
+  rel="stylesheet"
+  href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+
+<style>
+  p {
+    margin-bottom: 0 !important;
+  }
+</style>
+
+{% endblock %} {% block content %}
 
 <div class="container">
-  <h1>Home</h1>
+  <div class="mb-5">
+    <h1>Home</h1>
+    <p>Witaj w panelu administratora</p>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="small-box bg-primary">
+        <div class="inner">
+          <h3>20</h3>
+          <p>Zamówień</p>
+        </div>
+        <div class="icon">
+          <i class="fa fa-shopping-cart"></i>
+        </div>
+        <a href="#" class="small-box-footer">
+          Zobacz wszystkie <i class="fa fa-arrow-circle-right"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="small-box bg-success">
+        <div class="inner">
+          <h3>150</h3>
+          <p>Użytkowników</p>
+        </div>
+        <div class="icon">
+          <i class="fa fa-user"></i>
+        </div>
+        <a href="#" class="small-box-footer">
+          Zobacz wszystkich <i class="fa fa-arrow-circle-right"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="small-box bg-warning">
+        <div class="inner">
+          <h3>3424</h3>
+          <p>Produktów</p>
+        </div>
+        <div class="icon">
+          <i class="fa fa-laptop"></i>
+        </div>
+        <a href="#" class="small-box-footer">
+          Zobacz wszystkie <i class="fa fa-arrow-circle-right"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="info-box bg-gray">
+        <span class="info-box-icon"><i class="fa fa-cart-arrow-down"></i></span>
+        <div class="info-box-content">
+          <span class="info-box-text">Ilość zamówionych produktów</span>
+          <span class="info-box-number">410</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="info-box bg-gray-dark">
+        <span class="info-box-icon"><i class="fa fa-bars"></i></span>
+        <div class="info-box-content">
+          <span class="info-box-text">Ilość logów systemowych</span>
+          <span class="info-box-number">410</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock %}

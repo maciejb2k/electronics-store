@@ -3,9 +3,6 @@
 namespace App\Controllers;
 
 use App\Classes\Controller;
-use App\Classes\Config;
-
-use \PDOException;
 
 class AdminHome extends Controller
 {
@@ -15,10 +12,5 @@ class AdminHome extends Controller
       'index.admin.html.twig',
       []
     );
-  }
-
-  public function show($id)
-  {
-    echo $id;
   }
 }

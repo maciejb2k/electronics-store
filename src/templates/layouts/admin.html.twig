@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pl">
-  {% include('/inc/head.html.twig') %}
+  <head>
+    {% include('/inc/head.html.twig') %} {% block head %}{% endblock %}
+  </head>
 
   <body>
     <div class="admin-panel">
@@ -10,46 +12,59 @@
         <nav class="admin-aside__nav">
           <ul class="admin-aside__list">
             <li>
+              <a href="{{ route('admin.index') }}" class="admin-aside__link">
+                <i data-feather="home" class="admin-aside__link-icon"></i
+                >Home</a
+              >
+            </li>
+            <br />
+            <li>
               <a
-                href="{{ url("/") }}"
+                href="{{ route('zamowienia.index') }}"
                 class="admin-aside__link"
-                ><i data-feather="home" class="admin-aside__link-icon"></i>Home</a
               >
-            </li>
-            <br>
-            <li>
-              <a href="{{ route('zamowienia.index') }}" class="admin-aside__link"
-                ><i data-feather="shopping-cart" class="admin-aside__link-icon"></i>Zamówienia</a
-              >
-            </li>
-            <li>
-              <a href="{{ route('produkty.index') }}" class="admin-aside__link"
-                ><i data-feather="box" class="admin-aside__link-icon"></i>Produkty</a
+                <i
+                  data-feather="shopping-cart"
+                  class="admin-aside__link-icon"
+                ></i
+                >Zamówienia</a
               >
             </li>
             <li>
-              <a href="{{ route('uzytkownicy.index') }}" class="admin-aside__link"
-                ><i data-feather="users" class="admin-aside__link-icon"></i>Użytkownicy</a
+              <a href="{{ route('produkty.index') }}" class="admin-aside__link">
+                <i data-feather="box" class="admin-aside__link-icon"></i
+                >Produkty</a
               >
             </li>
             <li>
-              <a href="{{ route('adresy.index') }}" class="admin-aside__link"
-                ><i data-feather="map" class="admin-aside__link-icon"></i>Adresy</a
+              <a
+                href="{{ route('uzytkownicy.index') }}"
+                class="admin-aside__link"
+              >
+                <i data-feather="users" class="admin-aside__link-icon"></i
+                >Użytkownicy</a
               >
             </li>
-            <br>
             <li>
-              <a href="{{ route('adresy.index') }}" class="admin-aside__link"
-                ><i data-feather="list" class="admin-aside__link-icon"></i>Transakcje</a
+              <a href="{{ route('adresy.index') }}" class="admin-aside__link">
+                <i data-feather="map" class="admin-aside__link-icon"></i
+                >Adresy</a
               >
             </li>
-            <br>
+            <br />
             <li>
-              <a href="{{ route('adresy.index') }}" class="admin-aside__link"
-                ><i data-feather="arrow-left" class="admin-aside__link-icon"></i>Strona Główna</a
+              <a href="{{ route('admin.index') }}" class="admin-aside__link">
+                <i data-feather="list" class="admin-aside__link-icon"></i
+                >Transakcje</a
               >
             </li>
-
+            <br />
+            <li>
+              <a href="{{ route('admin.index') }}" class="admin-aside__link">
+                <i data-feather="arrow-left" class="admin-aside__link-icon"></i
+                >Strona Główna</a
+              >
+            </li>
           </ul>
         </nav>
       </aside>
@@ -59,15 +74,15 @@
           <div class="admin-header__user">
             <img class="admin-header__user-av" src="{{
               assets("img/avatar.png")
-            }}" alt="" />
+            }}" alt=""/>
             <p class="admin-header__user-hello">Administrator</p>
           </div>
         </header>
-        <main class="admin-main">{% block content %} {% endblock %}</main>
+        <main class="admin-main">{% block content %}{% endblock %}</main>
       </div>
     </div>
 
-    {% include '/inc/footer.html.twig' %} {% block js %} {% endblock %}
+    {% include '/inc/footer.html.twig' %} {% block js %}{% endblock %}
     <script>
       feather.replace();
     </script>

@@ -12,8 +12,7 @@ use Pecee\SimpleRouter\SimpleRouter;
 use Pecee\Http\Request;
 
 SimpleRouter::group(['prefix' => '/projekt-bazy/admin'], function () {
-  SimpleRouter::get('/', [AdminHome::class, 'index'])->name("adminHome.index");
-  SimpleRouter::get('/test/{id}', [AdminHome::class, 'show']);
+  SimpleRouter::get('/', [AdminHome::class, 'index'])->name("admin.index");
 
   // Adresy
   SimpleRouter::get('/adresy/', [Adresy::class, 'index'])->name("adresy.index");
@@ -49,10 +48,8 @@ SimpleRouter::group(['prefix' => '/projekt-bazy/admin'], function () {
   SimpleRouter::get('/zamowienia/', [Zamowienia::class, 'index'])->name("zamowienia.index");
   SimpleRouter::get('/zamowienia/dodaj/', [Zamowienia::class, 'create'])->name("zamowienia.create");
   SimpleRouter::post('/zamowienia/dodaj/', [Zamowienia::class, 'storeApi'])->name("zamowienia.store");
-  SimpleRouter::get('/zamowienia/{id}', [Zamowienia::class, 'show'])->name("zamowienia.show");
   SimpleRouter::get('/zamowienia/edytuj/{id}', [Zamowienia::class, 'edit'])->name("zamowienia.edit");
   SimpleRouter::post('/zamowienia/edytuj/{id}', [Zamowienia::class, 'update'])->name("zamowienia.update");
-  SimpleRouter::post('/zamowienia/usun/{id}', [Zamowienia::class, 'destroy'])->name("zamowienia.destroy");
 });
 
 SimpleRouter::error(function (Request $request, \Exception $exception) {

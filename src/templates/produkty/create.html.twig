@@ -8,10 +8,11 @@
 		</div>
 
 		{% if sessionGet("error__add") %}
-			<div class="alert alert-danger mb-3">
-				{{ sessionShow("error__add") }}
-			</div>
-		{% endif %}
+    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+      {{ sessionShow("error__add ") }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endif %}
 
 		<form method="POST">
 			<div class="form-group mb-3">
@@ -33,7 +34,7 @@
 				</div>
 				<div class="mb-3">
 					<label for="kategoria" class="form-label">Kategoria</label>
-					<input value="Karty graficzne pur" id="kategoria" name="kategoria" type="text" class="form-control"/>
+					<input value="Karty graficzne" id="kategoria" name="kategoria" type="text" class="form-control"/>
 				</div>
 				<input class="btn btn-primary" type="submit" value="Dodaj"/>
 			</div>

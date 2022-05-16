@@ -7,16 +7,6 @@
       <a class="" href="{{ route("zamowienia.index") }}">Powrót do wszystkich zamówień</a>
     </div>
 
-  {# <div class="alert alert-success alert-dismissible fade mb-4" role="alert">
-    <div>Sukces</div>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-
-  <div class="alert alert-danger alert-dismissible show fade mb-4" role="alert">
-    <div>Error</div>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div> #}
-
   <div id="alert-error-placeholder"></div>
 
   <form method="POST" class="order-form">
@@ -223,6 +213,7 @@
       // po wpisaniu w pole tekstowe do autocomplete, z delay
       autocompleteInput.addEventListener("keyup", delay(async function(e) {
         let value = e.target.value;
+        autocompleteDropdown.innerHTML = "";
 
         if(!value) {
           autocompleteDropdown.style.display = "none";
@@ -308,7 +299,6 @@
       // Po kliknięciu złóż zamówienie
       document.querySelector(".order-form").addEventListener("submit", async function(e) {
         e.preventDefault();
-        console.log(e);
 
         const id_uzytkownika = document.getElementById("uzytkownik_id").value;
         const forma_platnosci = document.getElementById("forma_platnosci").value;
@@ -375,14 +365,14 @@
         const quantity = Number(cartQuantity.value);
 
         if(!currentProduct) {
-          console.log("podaj produkt");
+          alert('Podaj produkty.', 'danger');
           return false;
         }
 
         const isInCart = cart.some(item => item.product.id === currentProduct.id);
 
         if(isInCart) {
-          console.log("taki jzu istnieje");
+          alert('Taki produkt już istnieje.', 'danger');
           return false;
         }
 

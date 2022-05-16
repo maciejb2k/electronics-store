@@ -1,6 +1,12 @@
 {% extends "/layouts/admin.html.twig" %} {% block content %}
 
 <div class="container">
+  {% if sessionGet("success__index") %}
+  <div class="alert alert-success alert-dismissible fade show mb-5" role="alert">
+    {{ sessionShow("success__index") }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
   {% if sessionGet("error__index") %}
   <div class="alert alert-danger alert-dismissible fade show mb-5" role="alert">
     <strong>Uwaga!</strong> {{ sessionShow("error__index") }}
