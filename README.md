@@ -28,6 +28,12 @@ Następnie instalujemy zależności z composera:
 composer install
 ```
 
+Wygenerować autoloader composer jak nie został zrobiony (by można było automatycznie wywoływać klasy).
+
+```
+composer dump-autoload -o
+```
+
 Pozmieniać w pliku `src/classes/Config.php` to co nas interesuje.
 
 Strona jest dostosowana do wyświetlania w podstronie np: `localhost/projekt-bazy/`
