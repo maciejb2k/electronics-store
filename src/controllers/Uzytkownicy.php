@@ -193,6 +193,11 @@ class Uzytkownicy extends Controller
   // Usuwa podany rekord
   public function destroy($id)
   {
+    if ($id == $_SESSION["id"]) {
+      $_SESSION["error__index"] = "Nie możesz usunąć samego siebie";
+      return $this->helpers->redirectNamed("uzytkownicy.index");
+    }
+
     try {
       $this->db->query(
         "DELETE FROM uzytkownicy WHERE id = :id",
