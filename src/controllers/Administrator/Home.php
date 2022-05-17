@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Administrator;
 
 use App\Classes\Controller;
 use Faker;
 
-class AdminHome extends Controller
+class Home extends Controller
 {
   private $phoneNumbers = array();
 

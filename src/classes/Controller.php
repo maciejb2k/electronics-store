@@ -2,7 +2,7 @@
 
 namespace App\Classes;
 
-use App\Classes\Config;
+use App\Config\Config;
 use App\Classes\Database;
 
 use Twig\Loader\FilesystemLoader;

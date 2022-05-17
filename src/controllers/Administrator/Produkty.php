@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Administrator;
 
 use App\Classes\Controller;
 
 use \PDOException;
 
-class Uzytkownicy extends Controller
+class Produkty extends Controller
 {
   public function index()
   {
-    $uzytkownicy = null;
+    $produkty = null;
     $perPage = 30;
     $pages = 1;
     $search = $_GET["search"] ?? null;
@@ -19,37 +19,39 @@ class Uzytkownicy extends Controller
     try {
       if (isset($search)) {
         $this->db->query(
-          "SELECT * FROM uzytkownicy_paginuj_wyszukaj(:search, :page, :perPage)",
+          "SELECT * FROM produkty_paginuj_wyszukaj(:search, :page, :perPage, :showAll)",
           array(
             "search" => $search,
             "page" => $page,
             "perPage" => $perPage,
+            "showAll" => "true"
           )
         );
-        $uzytkownicy = $this->db->multipleRows();
+        $produkty = $this->db->multipleRows();
 
         $this->db->query(
-          "SELECT COUNT(*) FROM uzytkownicy_wyszukaj(:search)",
+          "SELECT COUNT(*) FROM produkty_wyszukaj(:search, :showAll)",
           array(
-            "search" => $search
+            "search" => $search,
+            "showAll" => "true",
           )
         );
         $rowCount = $this->db->singleRow();
         $pages = ceil($rowCount["count"] / $perPage);
       } else {
         $this->db->query(
-          "SELECT * FROM uzytkownicy_pobierz(:page, :perPage)",
+          "SELECT * FROM produkty_pobierz(:page, :perPage)",
           array(
             "page" => $page,
             "perPage" => $perPage,
           )
         );
-        $uzytkownicy = $this->db->multipleRows();
+        $produkty = $this->db->multipleRows();
 
-        $this->db->query("SELECT * FROM uzytkownicy_pobierz_ilosc();");
+        $this->db->query("SELECT * FROM produkty_pobierz_ilosc();");
         $rowCount = $this->db->singleRow();
 
-        $pages = ceil($rowCount["uzytkownicy_pobierz_ilosc"] / $perPage);
+        $pages = ceil($rowCount["produkty_pobierz_ilosc"] / $perPage);
       }
     } catch (PDOException $e) {
       $_SESSION["error__index"] = $this->helpers->formatErrorMsg($e->getMessage());
@@ -59,9 +61,9 @@ class Uzytkownicy extends Controller
     $pagination = $this->helpers->buildPagination($pages, $page);
 
     return $this->twig->render(
-      '/uzytkownicy/index.html.twig',
+      '/administrator/produkty/index.html.twig',
       [
-        'uzytkownicy' => $uzytkownicy,
+        'produkty' => $produkty,
         'pagination' => $pagination
       ]
     );
@@ -71,7 +73,7 @@ class Uzytkownicy extends Controller
   public function create()
   {
     return $this->twig->render(
-      '/uzytkownicy/create.html.twig',
+      '/administrator/produkty/create.html.twig',
       []
     );
   }
@@ -85,26 +87,30 @@ class Uzytkownicy extends Controller
       echo 'Value= ' . $value . '<br /><br />';
     }
 
+    // Jeżeli nie ustawilismy ceny, to musi mieć wartość domyślną
+    if (empty($_POST["cena"])) {
+      $_POST["cena"] = 0;
+    }
+
     try {
       $this->db->query(
-        "CALL uzytkownicy_dodaj(:imie, :nazwisko, :nazwa_uzytkownika, :email, :telefon, :haslo, :adres_id);",
+        "CALL produkty_dodaj(:nazwa, :kod_producenta, :cena, :opis, :kategoria, :ilosc);",
         array(
-          "imie" => $_POST["imie"],
-          "nazwisko" => $_POST["nazwisko"],
-          "nazwa_uzytkownika" => $_POST["nazwa_uzytkownika"],
-          "email" => $_POST["email"],
-          "telefon" => $_POST["telefon"],
-          "haslo" => $_POST["haslo"],
-          "adres_id" => $_POST["adres_id"],
+          "nazwa" => $_POST["nazwa"],
+          "kod_producenta" => $_POST["kod_producenta"],
+          "cena" => $_POST["cena"],
+          "opis" => $_POST["opis"],
+          "kategoria" => $_POST["kategoria"],
+          "ilosc" => $_POST["ilosc"],
         )
       );
     } catch (PDOException $e) {
       $_SESSION["error__add"] = $this->helpers->formatErrorMsg($e->getMessage());
-      return $this->helpers->redirectNamed("uzytkownicy.create");
+      return $this->helpers->redirectNamed("produkty.create");
     };
 
-    $_SESSION["success__index"] = "Poprawnie dodano nowego użytkownika";
-    return $this->helpers->redirectNamed("uzytkownicy.index");
+    $_SESSION["success__index"] = "Poprawnie dodano nowy produkt";
+    return $this->helpers->redirectNamed("produkty.index");
   }
 
   // Wyświetla stronę z pojedyńczym rekordem
@@ -112,38 +118,7 @@ class Uzytkownicy extends Controller
   {
     try {
       $this->db->query(
-        "SELECT * FROM uzytkownicy_pobierz_szczegoly_wszystkie(:id);",
-        array(
-          "id" => $id,
-        )
-      );
-      $uzytkownik = $this->db->singleRow();
-
-      $this->db->query(
-        "SELECT * FROM zamowienia_znajdz_po_uid(:id_uzytkownika);",
-        array(
-          "id_uzytkownika" => $uzytkownik["id"]
-        )
-      );
-      $zamowienia = $this->db->multipleRows();
-    } catch (PDOException $e) {
-      // Jeżeli nie istnieje rekord z danym id to wróć na stronę główną.
-      $_SESSION["error__index"] = $this->helpers->formatErrorMsg($e->getMessage());
-      return $this->helpers->redirectNamed("uzytkownicy.index");
-    };
-
-    return $this->twig->render('/uzytkownicy/show.html.twig', [
-      'uzytkownik' => $uzytkownik,
-      'zamowienia' => $zamowienia,
-    ]);
-  }
-
-  // Wyświetla stronę do edycji
-  public function edit($id)
-  {
-    try {
-      $this->db->query(
-        "SELECT * FROM uzytkownicy_pobierz_szczegoly_wszystkie(:id);",
+        "SELECT * FROM produkty_znajdz(:id);",
         array(
           "id" => $id,
         )
@@ -152,10 +127,36 @@ class Uzytkownicy extends Controller
     } catch (PDOException $e) {
       // Jeżeli nie istnieje rekord z danym id to wróć na stronę główną.
       $_SESSION["error__index"] = $this->helpers->formatErrorMsg($e->getMessage());
-      return $this->helpers->redirectNamed("uzytkownicy.index");
+      return $this->helpers->redirectNamed("produkty.index");
     };
 
-    return $this->twig->render('/uzytkownicy/edit.html.twig', ['data' => $row]);
+    return $this->twig->render(
+      '/administrator/produkty/show.html.twig',
+      ['data' => $row]
+    );
+  }
+
+  // Wyświetla stronę do edycji
+  public function edit($id)
+  {
+    try {
+      $this->db->query(
+        "SELECT * FROM produkty_znajdz(:id);",
+        array(
+          "id" => $id,
+        )
+      );
+      $row = $this->db->singleRow();
+    } catch (PDOException $e) {
+      // Jeżeli nie istnieje rekord z danym id to wróć na stronę główną.
+      $_SESSION["error__index"] = $this->helpers->formatErrorMsg($e->getMessage());
+      return $this->helpers->redirectNamed("produkty.index");
+    };
+
+    return $this->twig->render(
+      '/administrator/produkty/edit.html.twig',
+      ['data' => $row]
+    );
   }
 
   // Wykonuje update danych, które zmieniamy
@@ -169,53 +170,47 @@ class Uzytkownicy extends Controller
 
     try {
       $this->db->query(
-        "CALL uzytkownicy_edytuj(:id, :imie, :nazwisko, :nazwa_uzytkownika, :email, :telefon, :haslo, :adres_id);",
+        "CALL produkty_edytuj(:id, :nazwa, :kod_producenta, :cena, :opis, :kategoria, :ilosc);",
         array(
           "id" => $id,
-          "imie" => $_POST["imie"],
-          "nazwisko" => $_POST["nazwisko"],
-          "nazwa_uzytkownika" => $_POST["nazwa_uzytkownika"],
-          "email" => $_POST["email"],
-          "telefon" => $_POST["telefon"],
-          "haslo" => $_POST["haslo"],
-          "adres_id" => $_POST["adres_id"],
+          "nazwa" => $_POST["nazwa"],
+          "kod_producenta" => $_POST["kod_producenta"],
+          "cena" => $_POST["cena"],
+          "opis" => $_POST["opis"],
+          "kategoria" => $_POST["kategoria"],
+          "ilosc" => $_POST["ilosc"],
         )
       );
     } catch (PDOException $e) {
       $_SESSION["error__edit"] = $this->helpers->formatErrorMsg($e->getMessage());
-      return $this->helpers->redirectNamed("uzytkownicy.edit");
+      return $this->helpers->redirectNamed("produkty.edit");
     };
 
-    $_SESSION["success__edit"] = "Poprawnie edytowano użytkownika.";
-    return $this->helpers->redirectNamed("uzytkownicy.edit");
+    $_SESSION["success__edit"] = "Poprawnie edytowano produkt.";
+    return $this->helpers->redirectNamed("produkty.edit", $id);
   }
 
   // Usuwa podany rekord
   public function destroy($id)
   {
-    if ($id == $_SESSION["id"]) {
-      $_SESSION["error__index"] = "Nie możesz usunąć samego siebie";
-      return $this->helpers->redirectNamed("uzytkownicy.index");
-    }
-
     try {
       $this->db->query(
-        "DELETE FROM uzytkownicy WHERE id = :id",
+        "DELETE FROM produkty WHERE id = :id",
         array(
           "id" => $id
         )
       );
     } catch (PDOException $e) {
       $_SESSION["error__index"] = $this->helpers->formatErrorMsg($e->getMessage());
-      return $this->helpers->redirectNamed("uzytkownicy.index");
+      return $this->helpers->redirectNamed("produkty.index");
     };
 
-    $_SESSION["success__index"] = "Poprawnie usunięto uzytkownika o id = $id";
-    return $this->helpers->redirectNamed("uzytkownicy.index");
+    $_SESSION["success__index"] = "Poprawnie usunięto produkt o id = $id";
+    return $this->helpers->redirectNamed("produkty.index");
   }
 
-  // Wyszukiwanie użytkownika jako endpoint
-  public function searchUser()
+  // Wyszukiwanie adresu jako endpoint
+  public function searchProduct()
   {
     // Pobranie parametrów przekazanych w body
     $request_body = file_get_contents('php://input');
@@ -232,9 +227,10 @@ class Uzytkownicy extends Controller
 
     try {
       $this->db->query(
-        "SELECT * FROM uzytkownicy_wyszukaj(:name)",
+        "SELECT * FROM produkty_wyszukaj(:name, :showAll)",
         array(
-          "name" => $name
+          "name" => $name,
+          "showAll" => "false",
         )
       );
       $row = $this->db->multipleRows();

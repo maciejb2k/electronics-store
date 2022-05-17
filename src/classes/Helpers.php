@@ -2,7 +2,7 @@
 
 namespace App\Classes;
 
-use App\Classes\Config;
+use App\Config\Config;
 
 use Pecee\SimpleRouter\SimpleRouter;
 

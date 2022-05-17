@@ -36,7 +36,11 @@
             <img class="admin-header__user-av" src="{{
               assets("img/avatar.png")
             }}" alt=""/>
-            <p class="admin-header__user-hello">Użytkownik</p>
+            <p class="admin-header__user-hello">
+              {% if sessionGet("email") %}
+              {{ sessionGet("email") }}
+              {% else %} Użytkownik {% endif %}
+            </p>
           </div>
         </header>
         <main class="admin-main">{% block content %}{% endblock %}</main>

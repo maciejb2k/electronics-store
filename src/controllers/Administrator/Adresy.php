@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Administrator;
 
 use App\Classes\Controller;
 
 use \PDOException;
 
-class Produkty extends Controller
+class Adresy extends Controller
 {
   public function index()
   {
-    $produkty = null;
+    $adresy = null;
     $perPage = 30;
     $pages = 1;
     $search = $_GET["search"] ?? null;
@@ -19,39 +19,37 @@ class Produkty extends Controller
     try {
       if (isset($search)) {
         $this->db->query(
-          "SELECT * FROM produkty_paginuj_wyszukaj(:search, :page, :perPage, :showAll)",
+          "SELECT * FROM adresy_paginuj_wyszukaj(:search, :page, :perPage)",
           array(
             "search" => $search,
             "page" => $page,
             "perPage" => $perPage,
-            "showAll" => "true"
           )
         );
-        $produkty = $this->db->multipleRows();
+        $adresy = $this->db->multipleRows();
 
         $this->db->query(
-          "SELECT COUNT(*) FROM produkty_wyszukaj(:search, :showAll)",
+          "SELECT COUNT(*) FROM adresy_wyszukaj(:search)",
           array(
-            "search" => $search,
-            "showAll" => "true",
+            "search" => $search
           )
         );
         $rowCount = $this->db->singleRow();
         $pages = ceil($rowCount["count"] / $perPage);
       } else {
         $this->db->query(
-          "SELECT * FROM produkty_pobierz(:page, :perPage)",
+          "SELECT * FROM adresy_pobierz(:page, :perPage)",
           array(
             "page" => $page,
             "perPage" => $perPage,
           )
         );
-        $produkty = $this->db->multipleRows();
+        $adresy = $this->db->multipleRows();
 
-        $this->db->query("SELECT * FROM produkty_pobierz_ilosc();");
+        $this->db->query("SELECT * FROM adresy_pobierz_ilosc();");
         $rowCount = $this->db->singleRow();
 
-        $pages = ceil($rowCount["produkty_pobierz_ilosc"] / $perPage);
+        $pages = ceil($rowCount["adresy_pobierz_ilosc"] / $perPage);
       }
     } catch (PDOException $e) {
       $_SESSION["error__index"] = $this->helpers->formatErrorMsg($e->getMessage());
@@ -61,9 +59,9 @@ class Produkty extends Controller
     $pagination = $this->helpers->buildPagination($pages, $page);
 
     return $this->twig->render(
-      '/produkty/index.html.twig',
+      '/administrator/adresy/index.html.twig',
       [
-        'produkty' => $produkty,
+        'adresy' => $adresy,
         'pagination' => $pagination
       ]
     );
@@ -73,7 +71,7 @@ class Produkty extends Controller
   public function create()
   {
     return $this->twig->render(
-      '/produkty/create.html.twig',
+      '/administrator/adresy/create.html.twig',
       []
     );
   }
@@ -87,30 +85,24 @@ class Produkty extends Controller
       echo 'Value= ' . $value . '<br /><br />';
     }
 
-    // Jeżeli nie ustawilismy ceny, to musi mieć wartość domyślną
-    if (empty($_POST["cena"])) {
-      $_POST["cena"] = 0;
-    }
-
     try {
       $this->db->query(
-        "CALL produkty_dodaj(:nazwa, :kod_producenta, :cena, :opis, :kategoria, :ilosc);",
+        "SELECT * FROM adresy_dodaj(:ulica, :nr_mieszkania, :miasto, :kod_pocztowy, :kraj);",
         array(
-          "nazwa" => $_POST["nazwa"],
-          "kod_producenta" => $_POST["kod_producenta"],
-          "cena" => $_POST["cena"],
-          "opis" => $_POST["opis"],
-          "kategoria" => $_POST["kategoria"],
-          "ilosc" => $_POST["ilosc"],
+          "ulica" => $_POST["ulica"],
+          "nr_mieszkania" => $_POST["nr_mieszkania"],
+          "miasto" => $_POST["miasto"],
+          "kod_pocztowy" => $_POST["kod_pocztowy"],
+          "kraj" => $_POST["kraj"],
         )
       );
     } catch (PDOException $e) {
       $_SESSION["error__add"] = $this->helpers->formatErrorMsg($e->getMessage());
-      return $this->helpers->redirectNamed("produkty.create");
+      return $this->helpers->redirectNamed("adresy.create");
     };
 
-    $_SESSION["success__index"] = "Poprawnie dodano nowy produkt";
-    return $this->helpers->redirectNamed("produkty.index");
+    $_SESSION["success__index"] = "Poprawnie dodano nowy adres";
+    return $this->helpers->redirectNamed("adresy.index");
   }
 
   // Wyświetla stronę z pojedyńczym rekordem
@@ -118,7 +110,7 @@ class Produkty extends Controller
   {
     try {
       $this->db->query(
-        "SELECT * FROM produkty_znajdz(:id);",
+        "SELECT * FROM adresy_znajdz(:id);",
         array(
           "id" => $id,
         )
@@ -127,10 +119,13 @@ class Produkty extends Controller
     } catch (PDOException $e) {
       // Jeżeli nie istnieje rekord z danym id to wróć na stronę główną.
       $_SESSION["error__index"] = $this->helpers->formatErrorMsg($e->getMessage());
-      return $this->helpers->redirectNamed("produkty.index");
+      return $this->helpers->redirectNamed("adresy.index");
     };
 
-    return $this->twig->render('/produkty/show.html.twig', ['data' => $row]);
+    return $this->twig->render(
+      '/administrator/adresy/show.html.twig',
+      ['data' => $row]
+    );
   }
 
   // Wyświetla stronę do edycji
@@ -138,7 +133,7 @@ class Produkty extends Controller
   {
     try {
       $this->db->query(
-        "SELECT * FROM produkty_znajdz(:id);",
+        "SELECT * FROM adresy_znajdz(:id);",
         array(
           "id" => $id,
         )
@@ -147,10 +142,13 @@ class Produkty extends Controller
     } catch (PDOException $e) {
       // Jeżeli nie istnieje rekord z danym id to wróć na stronę główną.
       $_SESSION["error__index"] = $this->helpers->formatErrorMsg($e->getMessage());
-      return $this->helpers->redirectNamed("produkty.index");
+      return $this->helpers->redirectNamed("adresy.index");
     };
 
-    return $this->twig->render('/produkty/edit.html.twig', ['data' => $row]);
+    return $this->twig->render(
+      '/administrator/adresy/edit.html.twig',
+      ['data' => $row]
+    );
   }
 
   // Wykonuje update danych, które zmieniamy
@@ -164,24 +162,23 @@ class Produkty extends Controller
 
     try {
       $this->db->query(
-        "CALL produkty_edytuj(:id, :nazwa, :kod_producenta, :cena, :opis, :kategoria, :ilosc);",
+        "CALL adresy_edytuj(:id, :ulica, :nr_mieszkania, :miasto, :kod_pocztowy, :kraj);",
         array(
           "id" => $id,
-          "nazwa" => $_POST["nazwa"],
-          "kod_producenta" => $_POST["kod_producenta"],
-          "cena" => $_POST["cena"],
-          "opis" => $_POST["opis"],
-          "kategoria" => $_POST["kategoria"],
-          "ilosc" => $_POST["ilosc"],
+          "ulica" => $_POST["ulica"],
+          "nr_mieszkania" => $_POST["nr_mieszkania"],
+          "miasto" => $_POST["miasto"],
+          "kod_pocztowy" => $_POST["kod_pocztowy"],
+          "kraj" => $_POST["kraj"],
         )
       );
     } catch (PDOException $e) {
       $_SESSION["error__edit"] = $this->helpers->formatErrorMsg($e->getMessage());
-      return $this->helpers->redirectNamed("produkty.edit");
+      return $this->helpers->redirectNamed("adresy.edit");
     };
 
-    $_SESSION["success__edit"] = "Poprawnie edytowano produkt.";
-    return $this->helpers->redirectNamed("produkty.edit", $id);
+    $_SESSION["success__edit"] = "Poprawnie edytowano adres.";
+    return $this->helpers->redirectNamed("adresy.edit", $id);
   }
 
   // Usuwa podany rekord
@@ -189,22 +186,22 @@ class Produkty extends Controller
   {
     try {
       $this->db->query(
-        "DELETE FROM produkty WHERE id = :id",
+        "DELETE FROM adresy WHERE id = :id",
         array(
           "id" => $id
         )
       );
     } catch (PDOException $e) {
       $_SESSION["error__index"] = $this->helpers->formatErrorMsg($e->getMessage());
-      return $this->helpers->redirectNamed("produkty.index");
+      return $this->helpers->redirectNamed("adresy.index");
     };
 
-    $_SESSION["success__index"] = "Poprawnie usunięto produkt o id = $id";
-    return $this->helpers->redirectNamed("produkty.index");
+    $_SESSION["success__index"] = "Poprawnie usunięto adres o id = $id";
+    return $this->helpers->redirectNamed("adresy.index");
   }
 
   // Wyszukiwanie adresu jako endpoint
-  public function searchProduct()
+  public function searchAddreses()
   {
     // Pobranie parametrów przekazanych w body
     $request_body = file_get_contents('php://input');
@@ -221,10 +218,9 @@ class Produkty extends Controller
 
     try {
       $this->db->query(
-        "SELECT * FROM produkty_wyszukaj(:name, :showAll)",
+        "SELECT * FROM adresy_wyszukaj(:name)",
         array(
-          "name" => $name,
-          "showAll" => "false",
+          "name" => $name
         )
       );
       $row = $this->db->multipleRows();

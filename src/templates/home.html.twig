@@ -1,5 +1,25 @@
 {% extends "/layouts/base.html.twig" %} {% block content %}
 
-<div class="container">Homepage</div>
+<div class="px-4 pt-5 my-5 text-center">
+  <h1 class="display-4 fw-bold pb-3">Sklep Komputerowy</h1>
+  <div class="col-lg-6 mx-auto">
+    <p class="lead mb-4" style="max-width: 800px; margin: 0 auto;">
+      Nasza marka to sieć nowoczesnych salonów stacjonarnych w całej Polsce,
+      jeden z najczęściej wybieranych Sklepów Internetowych w kraju i największy
+      sprzedawca na Allegro.
+    </p>
+    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
+      <a role="button" href="{{route("login.index")}}" class="btn btn-primary px-4 me-sm-3">Zaloguj się</a>
+      <a role="button" href="{{route("login.index")}}" class="btn btn-outline-secondary px-4 me-sm-3">Zobacz wszystko</a>
+    </div>
+  </div>
+  <div class="pt-1">
+    <div class="container px-5 mt-5 pb-5 d-flex justify-content-center">
+      <img src="{{ assets("img/photo.png") }}" class="img-fluid border rounded-3
+      shadow-lg mb-4" alt="Example image" width="700" height="500"
+      loading="lazy" />
+    </div>
+  </div>
+</div>
 
 {% endblock %}

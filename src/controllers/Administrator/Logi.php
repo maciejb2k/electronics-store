@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Administrator;
 
 use App\Classes\Controller;
 
@@ -35,7 +35,7 @@ class Logi extends Controller
     $pagination = $this->helpers->buildPagination($pages, $page);
 
     return $this->twig->render(
-      '/logi.html.twig',
+      '/administrator/logi.html.twig',
       [
         'logi' => $logi,
         'pagination' => $pagination

@@ -67,6 +67,7 @@ class Login extends Controller
     $_SESSION['rola'] = $uzytkownik['rola'];
     $_SESSION['zalogowany'] = true;
     $_SESSION['id'] = $uzytkownik['id'];
+    $_SESSION['email'] = $uzytkownik['email'];
 
     return $this->loginRedirect();
   }

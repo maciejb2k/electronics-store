@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Administrator;
 
 use App\Classes\Controller;
 
@@ -59,7 +59,7 @@ class Zamowienia extends Controller
     $pagination = $this->helpers->buildPagination($pages, $page);
 
     return $this->twig->render(
-      '/zamowienia/index.html.twig',
+      '/administrator/zamowienia/index.html.twig',
       [
         'zamowienia' => $zamowienia,
         'pagination' => $pagination
@@ -71,7 +71,7 @@ class Zamowienia extends Controller
   public function create()
   {
     return $this->twig->render(
-      '/zamowienia/create.html.twig',
+      '/administrator/zamowienia/create.html.twig',
       []
     );
   }
@@ -111,7 +111,7 @@ class Zamowienia extends Controller
       return $this->helpers->redirectNamed("zamowienia.index");
     };
 
-    return $this->twig->render('/zamowienia/edit.html.twig', [
+    return $this->twig->render('/administrator/zamowienia/edit.html.twig', [
       'zamowienie' => $zamowienie,
       'uzytkownik' => $uzytkownik,
       'produkty' => $produkty,

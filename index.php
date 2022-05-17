@@ -3,7 +3,7 @@
 namespace App;
 
 use Pecee\SimpleRouter\SimpleRouter;
-use App\Classes\Config;
+use App\Config\Config;
 
 require_once realpath("vendor/autoload.php");
 

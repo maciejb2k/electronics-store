@@ -34,6 +34,6 @@ Wygenerować autoloader composer jak nie został zrobiony (by można było autom
 composer dump-autoload -o
 ```
 
-Pozmieniać w pliku `src/classes/Config.php` to co nas interesuje.
+Pozmieniać w pliku `src/config/Config.php` to co nas interesuje.
 
 Strona jest dostosowana do wyświetlania w podstronie np: `localhost/projekt-bazy/`

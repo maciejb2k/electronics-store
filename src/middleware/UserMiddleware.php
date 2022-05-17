@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Classes\Middleware;
+namespace App\Middleware;
 
 use Pecee\Http\Middleware\IMiddleware;
 use Pecee\Http\Request;
