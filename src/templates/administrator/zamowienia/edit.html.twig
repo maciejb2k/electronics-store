@@ -83,7 +83,7 @@
 					<form method="POST">
 						<label for="status_zamowienia" class="form-label">Zmień status zamówienia</label>
 						<div class="input-group mb-3">
-							<select class="form-select me-3" name="status_zamowienia" id="status_zamowienia" aria-label="Default select example">
+							<select {% if zamowienie.status_zamowienia|lower == "dostarczone" or  zamowienie.status_zamowienia|lower == "anulowane"%} disabled {% endif %} class="form-select me-3" name="status_zamowienia" id="status_zamowienia" aria-label="Default select example">
 								<option {% if zamowienie.status_zamowienia|lower == "złożone" %} selected {% endif %} value="złożone">Złożone</option>
 								<option {% if zamowienie.status_zamowienia|lower == "przyjęte do realizacji" %} selected {% endif %} value="przyjęte do realizacji">Przyjęte do realizacji</option>
 								<option {% if zamowienie.status_zamowienia|lower == "oczekiwanie na wpłatę" %} selected {% endif %} value="oczekiwanie na wpłatę">Oczekiwanie na wpłatę</option>
@@ -91,7 +91,7 @@
 								<option {% if zamowienie.status_zamowienia|lower == "dostarczone" %} selected {% endif %} value="dostarczone">Dostarczone</option>
 								<option {% if zamowienie.status_zamowienia|lower == "anulowane" %} selected {% endif %} value="anulowane">Anulowane</option>
 							</select>
-							<input type="submit" class="btn btn-success" value="Zmień">
+							<input type="submit" class="btn btn-success" value="Zmień" {% if zamowienie.status_zamowienia|lower == "dostarczone" or  zamowienie.status_zamowienia|lower == "anulowane"%} disabled {% endif %}>
 						</div>
 					</form>
 				</div>

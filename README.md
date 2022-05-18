@@ -11,7 +11,7 @@ Projekt zaliczeniowy na bazy danych, UR III semestr.
 
 ## Instalacja
 
-Stworzyć bazę w PgAdmin, stworzyć tabele (w dobrej kolejności by klucze się zgadzały), funkcje, procedury i na koniec zaseedować bazę.
+Stworzyć bazę danych w pgAdmin np. "projekt-bazy" i w query builder z pliku `final.sql` wkleić cały kod i zbudować bazę.
 
 Przenieść folder projektu do jakiegoś serwera www (htdocs w xampp).
 
@@ -36,4 +36,6 @@ composer dump-autoload -o
 
 Pozmieniać w pliku `src/config/Config.php` to co nas interesuje.
 
-Strona jest dostosowana do wyświetlania w podstronie np: `localhost/projekt-bazy/`
+Strona jest dostosowana do wyświetlania w podstronie np: `localhost/projekt-bazy/`. Jeżeli strona będzie wyświetlana w folderze głównym, czyli pod domeną np. `localhost/` to zmienną `$SUBDIR` w `Config.php` trzeba ustawić na pusty string, lub jak w innej nazwie podfolderu to na taką samą nazwę w `Config.php` w tej zmiennej.
+
+Po wykonaniu powyższych kroków projekt powinien działać.
