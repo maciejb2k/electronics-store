@@ -16,7 +16,7 @@ Back-End, czyli cała logika biznesowa została w pełni przeniesiona do Postgre
 
 Front-End został wykonany w czystym PHP bez żadnych frameworków. W aplikacji został użyty wzorzec MVC. Autoloading klas jest zgodny z PSR-4. Do szablonów wykorzystany został `Twig`, do generowania losowych danych użytkowników i adresów została użyta biblioteka `Faker`, natomiast do danych produktów służyła pomocą strona X-Kom. Jako router wykorzystany został `pecee/simple-router`. 
 
-Polskie znaki w nazwach folderów i klas występują na potrzeby przedmiotu.
+Polskie nazwy w nazwach folderów i klas występują na potrzeby przedmiotu.
 
 
 
