@@ -151,7 +151,7 @@ Panel administratora - podgląd zamówienia
 
 Panel użytkownika - podgląd zamówienia
 
-![localhost_projekt-bazy_user_](C:\Users\gigachad\Desktop\bazy ssy\localhost_projekt-bazy_user_.png)
+![localhost_projekt-bazy_user_](https://user-images.githubusercontent.com/6316812/175614607-435b9003-d754-429f-94aa-ae85918efee5.png)
 
 
 
