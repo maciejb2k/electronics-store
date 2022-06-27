@@ -62,7 +62,7 @@ Panel logowania
 
 Panel administratora
 
-![localhost_projekt-bazy_admin_ (1)](C:\Users\gigachad\Desktop\bazy ssy\localhost_projekt-bazy_admin_ (1).png)
+![localhost_projekt-bazy_admin_ (1)](https://user-images.githubusercontent.com/6316812/175973061-e8b2c0d9-f6ae-41db-b60d-be4414f2848e.png)
 
 
 
