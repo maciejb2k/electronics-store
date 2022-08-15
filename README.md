@@ -4,7 +4,7 @@ Projekt zaliczeniowy na przedmiot Bazy Danych. Uniwersytet Rzeszowski, I st., 4 
 
 Projekt wykonali: **Maciej Biel, Karol Bobowski, Kamil Data.**
 
-Technologie: `PHP 8`, `PostgreSQL`, 'PL/pgSQL'
+Technologie: `PHP 8`, `PostgreSQL`, `PL/pgSQL`
 
 
 
